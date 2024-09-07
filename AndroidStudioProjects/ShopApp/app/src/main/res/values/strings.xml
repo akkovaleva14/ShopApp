@@ -11,4 +11,10 @@
     <string name="title_message">Сообщения</string>
     <string name="title_profile">Профиль</string>
     <string name="placeholder_text">Text</string>
+    <string name="enter">Войти</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="password">Пароль</string>
+    <string name="email">Электронная почта</string>
+    <string name="name">Имя</string>
+    <string name="registration">Регистрация</string>
 </resources>
