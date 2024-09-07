@@ -38,7 +38,16 @@
         android:name="com.example.shopapp.ui.ProfileFragment"
         android:label="@string/title_profile"
         app:icon="@drawable/profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_entranceFragment"
+            app:destination="@id/navigation_entrance" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/navigation_entrance"
+        android:name="com.example.shopapp.ui.EntranceFragment"
+        android:label="@string/title_entrance"
+        tools:layout="@layout/fragment_entrance" />
 
 </navigation>

@@ -17,4 +17,9 @@
     <string name="email">Электронная почта</string>
     <string name="name">Имя</string>
     <string name="registration">Регистрация</string>
+    <string name="phone_or_mail">Телефон или почта</string>
+    <string name="entrance">Вход</string>
+    <string name="toggle_password_visibility">Toggle Password Visibility</string>
+    <string name="title_entrance">Вход</string>
+
 </resources>
