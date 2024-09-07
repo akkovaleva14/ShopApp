@@ -25,7 +25,6 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     private var _binding: FragmentEntranceBinding? = null
     private val binding get() = _binding!!
 
-    // Переменная для отслеживания состояния видимости пароля
     private var isPasswordVisible = false
 
     override fun onCreateView(
@@ -40,7 +39,6 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Обработка нажатия на кнопку для показа/скрытия пароля
         binding.btnShowHidePassword.setOnClickListener {
             togglePasswordVisibility()
         }
@@ -59,6 +57,7 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
                 findNavController().navigate(R.id.action_entranceFragment_to_productsFragment)
             } else {
                 Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_entranceFragment_to_profileFragment)
             }
         })
 
@@ -69,15 +68,14 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
     private fun togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Скрыть пароль
-            binding.etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            binding.etPassword.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             binding.btnShowHidePassword.setImageResource(R.drawable.eye_hide)
         } else {
-            // Показать пароль
-            binding.etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.etPassword.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             binding.btnShowHidePassword.setImageResource(R.drawable.eye_show)
         }
-        // Перемещаем курсор в конец текста после смены вида
         binding.etPassword.setSelection(binding.etPassword.text.length)
         isPasswordVisible = !isPasswordVisible
     }
