@@ -4,13 +4,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.network.LoginRequest
 import com.example.network.LoginResponse
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class EntranceViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class EntranceViewModel(
+    private val authRepository: AuthRepository,
+    private val tokenRepository: TokenRepository
+) : ViewModel() {
 
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> = _loginResult
@@ -32,7 +37,12 @@ class EntranceViewModel(private val authRepository: AuthRepository) : ViewModel(
                     Log.d("EntranceViewModel", "Login successful for email: $email")
                     // Save token in local storage
                     val token = response.body()?.token
-                    // Save token logic here
+                    if (token != null) {
+                        Log.d("EntranceViewModel", "Saving token received from server: $token")
+                        saveToken(token)
+                    } else {
+                        Log.e("EntranceViewModel", "No token received from server")
+                    }
                 } else {
                     _loginResult.value = false
                     val errorBody = response.errorBody()?.string()
@@ -50,5 +60,16 @@ class EntranceViewModel(private val authRepository: AuthRepository) : ViewModel(
                 _error.value = "An error occurred: ${t.message}"
             }
         })
+    }
+
+    private fun saveToken(token: String) {
+        viewModelScope.launch {
+            try {
+                tokenRepository.saveToken(token)
+                Log.d("EntranceViewModel", "Token saved successfully in repository")
+            } catch (e: Exception) {
+                Log.e("EntranceViewModel", "Error saving token in repository: ${e.message}")
+            }
+        }
     }
 }

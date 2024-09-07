@@ -10,17 +10,31 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.shopapp.R
-import com.example.shopapp.databinding.FragmentEntranceBinding
+import com.example.data.TokenDatabase
+import com.example.domain.TokenRepository
 import com.example.domain.AuthRepository
 import com.example.domain.EntranceViewModel
 import com.example.domain.ViewModelFactory
+import com.example.shopapp.R
+import com.example.shopapp.databinding.FragmentEntranceBinding
 
 class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
-    private val entranceViewModel: EntranceViewModel by viewModels {
-        ViewModelFactory(AuthRepository())
+    private val tokenDatabase by lazy {
+        TokenDatabase.getDatabase(requireContext())
     }
+    private val tokenRepository by lazy {
+        TokenRepository(tokenDatabase.tokenDao())
+    }
+    private val authRepository = AuthRepository()
+    private val entranceViewModel: EntranceViewModel by viewModels {
+        ViewModelFactory(authRepository, tokenRepository)
+    }
+
+//    private val entranceViewModel: EntranceViewModel by viewModels {
+//        val tokenRepository = TokenRepository(TokenDatabase.getDatabase(requireContext()).tokenDao())
+//        ViewModelFactory(AuthRepository(), tokenRepository)
+//    }
 
     private var _binding: FragmentEntranceBinding? = null
     private val binding get() = _binding!!
