@@ -51,13 +51,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             if (isSuccess) {
                 Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_profileFragment_to_entranceFragment)
-            } else {
-                Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
             }
+            // If registration fails, do not show the default message here
         })
 
         authViewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            // Only show toast for specific errors, not general registration failures
+            when (errorMessage) {
+                "Email already exists" -> {
+                    Toast.makeText(
+                        context,
+                        "This email is already registered. Please use a different email.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                else -> {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
         })
     }
 
@@ -77,6 +89,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         if (!isValidEmail(email)) {
             Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (trimmedPassword.length < 8) {
+            Toast.makeText(context, "Password must be at least 8 characters", Toast.LENGTH_SHORT)
+                .show()
             return false
         }
 
@@ -103,4 +121,5 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onDestroyView()
         _binding = null
     }
+
 }
