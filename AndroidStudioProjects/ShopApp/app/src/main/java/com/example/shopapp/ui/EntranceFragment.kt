@@ -1,60 +1,93 @@
 package com.example.shopapp.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.shopapp.R
+import com.example.shopapp.databinding.FragmentEntranceBinding
+import com.example.domain.AuthRepository
+import com.example.domain.EntranceViewModel
+import com.example.domain.ViewModelFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EntranceFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class EntranceFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val entranceViewModel: EntranceViewModel by viewModels {
+        ViewModelFactory(AuthRepository())
     }
+
+    private var _binding: FragmentEntranceBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_entrance, container, false)
+    ): View {
+        _binding = FragmentEntranceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EntranceFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EntranceFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnLogin.setOnClickListener {
+            val phoneOrEmail = binding.etPhoneOrEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+
+            if (validateInput(phoneOrEmail, password)) {
+                entranceViewModel.loginUser(phoneOrEmail, password)
             }
+        }
+
+        entranceViewModel.loginResult.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if (isSuccess) {
+                findNavController().navigate(R.id.action_entranceFragment_to_productsFragment)
+            } else {
+                Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        entranceViewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    private fun validateInput(email: String, password: String): Boolean {
+        val trimmedEmail = email.trim()
+        val trimmedPassword = password.trim()
+
+        if (trimmedEmail.isEmpty() || trimmedPassword.isEmpty()) {
+            Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (!isValidEmail(trimmedEmail)) {
+            Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (trimmedPassword.length > 24) {
+            Toast.makeText(context, "Password should not exceed 24 characters", Toast.LENGTH_SHORT)
+                .show()
+            return false
+        }
+
+        return true
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        return email.matches(emailRegex.toRegex())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

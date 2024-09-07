@@ -48,6 +48,10 @@
         android:id="@+id/navigation_entrance"
         android:name="com.example.shopapp.ui.EntranceFragment"
         android:label="@string/title_entrance"
-        tools:layout="@layout/fragment_entrance" />
+        tools:layout="@layout/fragment_entrance">
+        <action
+            android:id="@+id/action_entranceFragment_to_productsFragment"
+            app:destination="@id/navigation_products" />
+    </fragment>
 
 </navigation>

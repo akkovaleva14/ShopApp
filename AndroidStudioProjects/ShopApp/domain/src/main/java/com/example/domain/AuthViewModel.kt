@@ -9,6 +9,7 @@ import com.example.network.RegistrationResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _registrationResult = MutableLiveData<Boolean>()
