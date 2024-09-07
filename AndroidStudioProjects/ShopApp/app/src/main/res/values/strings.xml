@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ShopApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_search">Поиск</string>
+    <string name="title_favorite">Избранное</string>
+    <string name="title_products">Объявления</string>
+    <string name="title_message">Сообщения</string>
+    <string name="title_profile">Профиль</string>
+    <string name="placeholder_text">Text</string>
+</resources>

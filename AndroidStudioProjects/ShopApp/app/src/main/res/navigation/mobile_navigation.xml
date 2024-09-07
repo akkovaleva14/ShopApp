@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_profile">
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.shopapp.ui.SearchFragment"
+        android:label="@string/title_search"
+        app:icon="@drawable/search"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_favorite"
+        android:name="com.example.shopapp.ui.FavoriteFragment"
+        android:label="@string/title_favorite"
+        app:icon="@drawable/favorite"
+        tools:layout="@layout/fragment_favorite" />
+
+    <fragment
+        android:id="@+id/navigation_products"
+        android:name="com.example.shopapp.ui.ProductsFragment"
+        android:label="@string/title_products"
+        app:icon="@drawable/products"
+        tools:layout="@layout/fragment_products" />
+
+    <fragment
+        android:id="@+id/navigation_message"
+        android:name="com.example.shopapp.ui.MessageFragment"
+        android:label="@string/title_message"
+        app:icon="@drawable/message"
+        tools:layout="@layout/fragment_message" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.shopapp.ui.ProfileFragment"
+        android:label="@string/title_profile"
+        app:icon="@drawable/profile"
+        tools:layout="@layout/fragment_profile" />
+
+
+</navigation>
