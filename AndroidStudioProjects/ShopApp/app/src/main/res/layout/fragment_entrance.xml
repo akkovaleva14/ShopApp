@@ -68,7 +68,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/toggle_password_visibility"
             android:padding="8dp"
-            android:src="@drawable/eye_show" />
+            android:src="@drawable/eye_toggle_selector" />
     </FrameLayout>
 
     <Button
