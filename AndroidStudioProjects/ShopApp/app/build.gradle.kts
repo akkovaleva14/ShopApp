@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(libs.androidx.recyclerview)
+    implementation(project(":network"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,4 +62,7 @@ dependencies {
     implementation(libs.room.runtime)    // Room runtime
     implementation(libs.room.ktx)        // Room Kotlin Extensions
     kapt(libs.room.compiler)             // Room compiler for code generation
+
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data></data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image" />
+
+        <TextView
+            android:id="@+id/productName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kitten"
+            android:textSize="40sp"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="@android:color/black"
+            android:paddingTop="4dp"/>
+
+        <TextView
+            android:id="@+id/productPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="60sp"
+            android:text="1000 RUB"
+            android:textColor="@android:color/black"
+            android:paddingTop="2dp"/>
+
+        <TextView
+            android:id="@+id/productDiscountedPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:text="2500 RUB"
+            android:textColor="@android:color/darker_gray"
+            android:paddingTop="2dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+</layout>

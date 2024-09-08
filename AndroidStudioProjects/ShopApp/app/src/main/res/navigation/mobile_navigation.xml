@@ -21,10 +21,10 @@
 
     <fragment
         android:id="@+id/navigation_products"
-        android:name="com.example.shopapp.ui.ProductsFragment"
+        android:name="com.example.shopapp.ui.ProductListFragment"
         android:label="@string/title_products"
         app:icon="@drawable/products"
-        tools:layout="@layout/fragment_products" />
+        tools:layout="@layout/fragment_product_list" />
 
     <fragment
         android:id="@+id/navigation_message"
