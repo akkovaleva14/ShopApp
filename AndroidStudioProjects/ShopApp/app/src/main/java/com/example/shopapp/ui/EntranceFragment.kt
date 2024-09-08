@@ -17,6 +17,7 @@ import com.example.domain.EntranceViewModel
 import com.example.domain.ViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
+import com.example.shopapp.utils.NetworkUtils
 
 class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
@@ -30,11 +31,6 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     private val entranceViewModel: EntranceViewModel by viewModels {
         ViewModelFactory(authRepository, tokenRepository)
     }
-
-//    private val entranceViewModel: EntranceViewModel by viewModels {
-//        val tokenRepository = TokenRepository(TokenDatabase.getDatabase(requireContext()).tokenDao())
-//        ViewModelFactory(AuthRepository(), tokenRepository)
-//    }
 
     private var _binding: FragmentEntranceBinding? = null
     private val binding get() = _binding!!
@@ -58,11 +54,16 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
         }
 
         binding.btnLogin.setOnClickListener {
-            val phoneOrEmail = binding.etPhoneOrEmail.text.toString()
-            val password = binding.etPassword.text.toString()
+            if (NetworkUtils.isInternetAvailable(requireContext())) {
+                val phoneOrEmail = binding.etPhoneOrEmail.text.toString()
+                val password = binding.etPassword.text.toString()
 
-            if (validateInput(phoneOrEmail, password)) {
-                entranceViewModel.loginUser(phoneOrEmail, password)
+                if (validateInput(phoneOrEmail, password)) {
+                    entranceViewModel.loginUser(phoneOrEmail, password)
+                }
+            } else {
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 

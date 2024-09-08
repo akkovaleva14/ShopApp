@@ -14,6 +14,7 @@ import com.example.shopapp.databinding.FragmentProfileBinding
 import com.example.domain.AuthRepository
 import com.example.domain.AuthViewModel
 import com.example.domain.AuthViewModelFactory
+import com.example.shopapp.utils.NetworkUtils
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
@@ -37,13 +38,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRegister.setOnClickListener {
-            val name = binding.etName.text.toString()
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-            val confirmPassword = binding.etConfirmPassword.text.toString()
+            if (NetworkUtils.isInternetAvailable(requireContext())) {
+                val name = binding.etName.text.toString()
+                val email = binding.etEmail.text.toString()
+                val password = binding.etPassword.text.toString()
+                val confirmPassword = binding.etConfirmPassword.text.toString()
 
-            if (validateInput(name, email, password, confirmPassword)) {
-                authViewModel.registerUser(name, email, password, confirmPassword)
+                if (validateInput(name, email, password, confirmPassword)) {
+                    authViewModel.registerUser(name, email, password, confirmPassword)
+                }
+            } else {
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -52,20 +57,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_profileFragment_to_entranceFragment)
             }
-            // If registration fails, do not show the default message here
         })
 
         authViewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
-            // Only show toast for specific errors, not general registration failures
             when (errorMessage) {
                 "Email already exists" -> {
-                    Toast.makeText(
-                        context,
-                        "This email is already registered. Please use a different email.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, "This email is already registered.", Toast.LENGTH_SHORT).show()
                 }
-
                 else -> {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }

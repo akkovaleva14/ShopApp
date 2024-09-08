@@ -49,7 +49,12 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
                 _registrationResult.value = false
                 Log.e("AuthViewModel", "Registration error: ${t.message}")
-                _error.value = "An error occurred: ${t.message}"
+
+                if (t.message?.contains("Unable to resolve host") == true || t.message?.contains("failed to connect") == true) {
+                    _error.value = "No internet connection. Please try again."
+                } else {
+                    _error.value = "An error occurred: ${t.message}"
+                }
             }
         })
     }
