@@ -26,9 +26,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -69,13 +67,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
             }
         })
+
+        authViewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        })
     }
 
     private fun validateInput(
-        name: String,
-        email: String,
-        password: String,
-        confirmPassword: String
+        name: String, email: String, password: String, confirmPassword: String
     ): Boolean {
         val trimmedPassword = password.trim()
         val trimmedConfirmPassword = confirmPassword.trim()
@@ -91,14 +90,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         if (trimmedPassword.length < 8) {
-            Toast.makeText(context, "Password must be at least 8 characters", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(context, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show()
             return false
         }
 
         if (trimmedPassword.length > 24) {
-            Toast.makeText(context, "Password should not exceed 24 characters", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(context, "Password should not exceed 24 characters", Toast.LENGTH_SHORT).show()
             return false
         }
 

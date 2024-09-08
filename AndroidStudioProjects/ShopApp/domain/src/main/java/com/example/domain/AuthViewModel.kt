@@ -18,15 +18,21 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun registerUser(name: String, email: String, password: String, cpassword: String) {
         val request = RegistrationRequest(name, email, password, cpassword)
         Log.d("AuthViewModel", "Attempting to register user with email: $email")
+
+        _isLoading.value = true  // Start loading
 
         authRepository.registerUser(request).enqueue(object : Callback<RegistrationResponse> {
             override fun onResponse(
                 call: Call<RegistrationResponse>,
                 response: Response<RegistrationResponse>
             ) {
+                _isLoading.value = false  // Stop loading
                 if (response.isSuccessful) {
                     _registrationResult.value = true
                     Log.d("AuthViewModel", "Registration successful for email: $email")
@@ -47,6 +53,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             }
 
             override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
+                _isLoading.value = false  // Stop loading
                 _registrationResult.value = false
                 Log.e("AuthViewModel", "Registration error: ${t.message}")
 
