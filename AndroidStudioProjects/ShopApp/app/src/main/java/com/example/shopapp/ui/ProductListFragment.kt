@@ -1,6 +1,7 @@
 package com.example.shopapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,8 @@ class ProductListFragment : Fragment() {
     private lateinit var viewModel: ProductListViewModel
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
+    private var isAscending = true // Track the sorting order
+    private var selectedCategory: String? = "computers" // Default category
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,27 +41,61 @@ class ProductListFragment : Fragment() {
         binding.productRecyclerView.layoutManager = gridLayoutManager
         binding.productRecyclerView.adapter = productAdapter
 
+        // Observe products data
         viewModel.products.observe(viewLifecycleOwner, Observer { products ->
-            // Update RecyclerView with the new list of products
             productAdapter.submitList(products)
             binding.errorTextView.visibility = View.GONE
             binding.retryButton.visibility = View.GONE
+            Log.d("ProductListFragment", "Products loaded successfully")
         })
 
+        // Observe error messages
         viewModel.error.observe(viewLifecycleOwner, Observer { error ->
-            // Show error and retry button
             binding.errorTextView.text = error
             binding.errorTextView.visibility = View.VISIBLE
             binding.retryButton.visibility = View.VISIBLE
+            Log.e("ProductListFragment", "Error loading products: $error")
         })
 
         binding.retryButton.setOnClickListener {
-            // Retry loading products
-            viewModel.loadProducts(null, null)
+            loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
         }
 
-        // Load data when the fragment is created
-        viewModel.loadProducts(null, null)
+        // Handle filter toggle button
+        binding.filterToggleButton.setOnClickListener {
+            isAscending = !isAscending
+            binding.filterToggleButton.setImageResource(
+                if (isAscending) R.drawable.ic_down else R.drawable.ic_up
+            )
+            loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
+        }
+
+        // Handle category selection (hardcoded categories)
+        setCategoryListeners()
+
+        // Load initial data with default category and ascending price order
+        loadProducts(selectedCategory, "asc")
+    }
+
+    private fun setCategoryListeners() {
+        val categories = mapOf(
+            binding.categoryComputers to "computers",
+            binding.categoryBags to "bags",
+            binding.categoryClothing to "clothing"
+        )
+
+        for ((view, category) in categories) {
+            view.setOnClickListener {
+                selectedCategory = category
+                loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
+                Log.d("ProductListFragment", "Selected category: $category")
+            }
+        }
+    }
+
+    private fun loadProducts(category: String?, sort: String?) {
+        viewModel.loadProducts(category, sort)
+        Log.d("ProductListFragment", "Loading products for category: $category with sort: $sort")
     }
 
     override fun onDestroyView() {

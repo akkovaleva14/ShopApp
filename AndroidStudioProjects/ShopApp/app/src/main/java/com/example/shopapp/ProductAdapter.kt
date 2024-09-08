@@ -25,17 +25,27 @@ class ProductAdapter : ListAdapter<Product, ProductAdapter.ProductViewHolder>(Pr
         fun bind(product: Product) {
             binding.productName.text = product.name
             binding.productPrice.text = "${product.price} ${itemView.context.getString(R.string.currency_symbol)}"
-            binding.productDiscountedPrice.text = "${product.discounted_price} ${itemView.context.getString(R.string.currency_symbol)}"
+
+            // Проверка наличия скидочной цены
+            if (product.discountedPrice != null) {
+                binding.productDiscountedPrice.text = "${product.discountedPrice} ${itemView.context.getString(R.string.currency_symbol)}"
+                binding.productDiscountedPrice.visibility = android.view.View.VISIBLE
+            } else {
+                binding.productDiscountedPrice.visibility = android.view.View.GONE
+            }
+
+            // Использование Glide для загрузки изображения
             Glide.with(itemView.context)
-                .load(product.images.firstOrNull())
-                .placeholder(R.drawable.placeholder_image) // Ensure you have this drawable
-                .into(binding.productImage)
+                .load(product.images.firstOrNull()) // Загружаем первое изображение из списка
+                .placeholder(R.drawable.placeholder_image) // Добавляем placeholder, пока изображение загружается
+                .error(R.drawable.error_image) // Изображение ошибки, если не удалось загрузить
+                .into(binding.productImage) // Назначаем ImageView для вывода изображения
         }
     }
 
     class ProductDiffCallback : DiffUtil.ItemCallback<Product>() {
         override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
-            return oldItem._id == newItem._id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {

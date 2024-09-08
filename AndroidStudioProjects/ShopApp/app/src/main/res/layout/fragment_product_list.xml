@@ -1,48 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data></data>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
 
-        <!-- Categories Header -->
-        <LinearLayout
+        <!-- Horizontal ScrollView для категорий -->
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:padding="8dp"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Элементы категорий -->
+                <TextView
+                    android:id="@+id/categoryComputers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Computers"
+                    android:padding="12dp"
+                    android:textColor="@android:color/white"
+                    android:background="@color/grey_tint" />
+
+                <TextView
+                    android:id="@+id/categoryBags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bags"
+                    android:padding="12dp"
+                    android:layout_marginStart="12dp"
+                    android:textColor="@android:color/white"
+                    android:background="@color/grey_tint" />
+
+                <TextView
+                    android:id="@+id/categoryClothing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clothing"
+                    android:padding="12dp"
+                    android:layout_marginStart="12dp"
+                    android:textColor="@android:color/white"
+                    android:background="@color/grey_tint" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Filter section -->
+        <LinearLayout
+            android:id="@+id/filterLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/horizontalScrollView"
             android:orientation="horizontal"
             android:padding="8dp"
-            android:background="?attr/colorSurface">
+            android:layout_marginTop="8dp">
 
             <TextView
+                android:id="@+id/filterTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Рекомендации"
-                android:padding="8dp"
-                android:textColor="@android:color/black" />
+                android:layout_marginTop="8dp"
+                android:text="Фильтр по возрастанию/ убыванию цены"
+                android:textColor="@android:color/white"
+                android:padding="8dp" />
 
-            <TextView
+            <ImageButton
+                android:id="@+id/filterToggleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Свежее"
-                android:padding="8dp"
-                android:textColor="@android:color/black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Рядом"
-                android:padding="8dp"
-                android:textColor="@android:color/black" />
+                android:src="@drawable/ic_down"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Price filter toggle"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp" />
         </LinearLayout>
 
-        <!-- RecyclerView -->
+        <!-- RecyclerView для списка продуктов -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/filterLayout"
+            android:layout_marginTop="16dp"
             android:padding="8dp" />
 
         <!-- Error TextView -->
@@ -50,9 +98,8 @@
             android:id="@+id/errorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="Error loading products"
+            android:layout_centerInParent="true"
+            android:text="Ошибка при загрузке продуктов"
             android:visibility="gone"
             android:textColor="@android:color/holo_red_dark" />
 
@@ -61,10 +108,8 @@
             android:id="@+id/retryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="Retry"
+            android:layout_centerInParent="true"
+            android:text="Повторить"
             android:visibility="gone" />
-
     </RelativeLayout>
 </layout>

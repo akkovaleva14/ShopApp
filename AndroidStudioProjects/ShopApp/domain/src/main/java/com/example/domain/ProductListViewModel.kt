@@ -1,5 +1,6 @@
 package com.example.domain
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,8 @@ class ProductListViewModel : ViewModel() {
 
     fun loadProducts(category: String?, sort: String?) {
         viewModelScope.launch {
+            Log.d("ProductListViewModel", "Loading products for category: $category, sort: $sort")
+
             RetrofitClient.apiService.getProducts(
                 category = category,
                 sort = sort
@@ -31,16 +34,20 @@ class ProductListViewModel : ViewModel() {
                         val productResponse = response.body()
                         if (productResponse?.status == "success") {
                             _products.value = productResponse.Data
+                            Log.d("ProductListViewModel", "Products loaded successfully: ${productResponse.Data.size} items")
                         } else {
-                            _error.value = "Error loading products"
+                            _error.value = "Error loading products: ${productResponse?.status}"
+                            Log.e("ProductListViewModel", "Error in response: ${productResponse?.status}")
                         }
                     } else {
-                        _error.value = "Server error"
+                        _error.value = "Server error: ${response.code()}"
+                        Log.e("ProductListViewModel", "Server error: ${response.code()} - ${response.message()}")
                     }
                 }
 
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
                     _error.value = "Network error"
+                    Log.e("ProductListViewModel", "Network error: ${t.message}", t)
                 }
             })
         }

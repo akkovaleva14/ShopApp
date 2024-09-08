@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">img6a.flixcart.com</domain> <!-- Разрешение HTTP трафика для img6a.flixcart.com -->
+    </domain-config>
+</network-security-config>
