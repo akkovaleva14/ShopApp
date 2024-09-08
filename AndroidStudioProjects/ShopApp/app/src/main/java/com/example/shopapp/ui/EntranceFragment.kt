@@ -18,8 +18,6 @@ import com.example.domain.ViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
 import com.example.shopapp.utils.NetworkUtils
-import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 
 class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
@@ -51,10 +49,12 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Логика для отображения и скрытия пароля
         binding.btnShowHidePassword.setOnClickListener {
             togglePasswordVisibility()
         }
 
+        // Клик на кнопку входа
         binding.btnLogin.setOnClickListener {
             if (NetworkUtils.isInternetAvailable(requireContext())) {
                 val phoneOrEmail = binding.etPhoneOrEmail.text.toString()
@@ -69,6 +69,18 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
             }
         }
 
+        // Наблюдаем за состоянием загрузки
+        entranceViewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
+            if (isLoading) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnLogin.visibility = View.GONE
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.btnLogin.visibility = View.VISIBLE
+            }
+        })
+
+        // Наблюдаем за результатом авторизации
         entranceViewModel.loginResult.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess) {
                 findNavController().navigate(R.id.action_entranceFragment_to_productsFragment)
