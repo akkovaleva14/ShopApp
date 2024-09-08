@@ -18,6 +18,8 @@ import com.example.domain.ViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
 import com.example.shopapp.utils.NetworkUtils
+import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
 
 class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 

@@ -71,20 +71,25 @@
             android:src="@drawable/eye_toggle_selector" />
     </FrameLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="60dp"
-        android:backgroundTint="@color/white"
+        android:layout_marginBottom="64dp"
         android:text="@string/entrance"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
+        app:backgroundTint="@color/grey_tint"
+        app:cornerRadius="16dp"
+        app:iconTint="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/grey_tint"
+        app:strokeWidth="1dp"
+        app:theme="@style/CustomButtonThemeOverlay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
