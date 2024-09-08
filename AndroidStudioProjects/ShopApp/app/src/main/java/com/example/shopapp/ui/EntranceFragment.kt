@@ -31,6 +31,11 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
         ViewModelFactory(authRepository, tokenRepository)
     }
 
+//    private val entranceViewModel: EntranceViewModel by viewModels {
+//        val tokenRepository = TokenRepository(TokenDatabase.getDatabase(requireContext()).tokenDao())
+//        ViewModelFactory(AuthRepository(), tokenRepository)
+//    }
+
     private var _binding: FragmentEntranceBinding? = null
     private val binding get() = _binding!!
 
