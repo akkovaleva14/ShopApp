@@ -1,12 +1,10 @@
 package com.example.shopapp.ui
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -48,6 +46,7 @@ class ProductListFragment : Fragment() {
             productAdapter.submitList(products)
             binding.errorTextView.visibility = View.GONE
             binding.retryButton.visibility = View.GONE
+            binding.productProgressBar.visibility = View.GONE // Hide progress bar after loading
             Log.d("ProductListFragment", "Products loaded successfully")
         })
 
@@ -56,6 +55,7 @@ class ProductListFragment : Fragment() {
             binding.errorTextView.text = error
             binding.errorTextView.visibility = View.VISIBLE
             binding.retryButton.visibility = View.VISIBLE
+            binding.productProgressBar.visibility = View.GONE // Hide progress bar on error
             Log.e("ProductListFragment", "Error loading products: $error")
         })
 
@@ -96,6 +96,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun loadProducts(category: String?, sort: String?) {
+        binding.productProgressBar.visibility = View.VISIBLE // Show progress bar during load
         viewModel.loadProducts(category, sort)
         Log.d("ProductListFragment", "Loading products for category: $category with sort: $sort")
     }
