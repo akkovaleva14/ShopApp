@@ -21,5 +21,10 @@
     <string name="price_filter">Фильтр по возрастанию/убыванию цены</string>
     <string name="price_filter_toggle">Price filter toggle</string>
     <string name="error_while_loading_products">Ошибка при загрузке товаров</string>
+    <string name="category_computers">Computers</string>
+    <string name="category_bags">Bags</string>
+    <string name="category_clothing">Clothing</string>
+    <string name="category_furniture">Furniture</string>
+    <string name="category_footwear">Footwear</string>
 
 </resources>

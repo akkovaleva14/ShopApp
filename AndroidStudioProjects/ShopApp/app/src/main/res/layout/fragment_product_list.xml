@@ -6,70 +6,72 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black">
+        android:background="@color/black_background">
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="?attr/colorSurface"
+            android:background="@color/black_background"
             android:padding="8dp">
 
             <LinearLayout
                 android:id="@+id/categoryContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="2dp">
 
-                <TextView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryComputers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/grey_tint"
-                    android:padding="12dp"
-                    android:text="Computers"
-                    android:textColor="@android:color/white" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="@string/category_computers"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/computers"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
-                <TextView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryBags"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/grey_tint"
-                    android:padding="12dp"
-                    android:text="Bags"
-                    android:textColor="@android:color/white" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="12dp"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners"
+                    android:contentDescription="@string/category_bags"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bags" />
 
-                <TextView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryClothing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/grey_tint"
-                    android:padding="12dp"
-                    android:text="Clothing"
-                    android:textColor="@android:color/white" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="12dp"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners"
+                    android:contentDescription="@string/category_clothing"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/clothing" />
 
-                <TextView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryFurniture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/grey_tint"
-                    android:padding="12dp"
-                    android:text="Furniture"
-                    android:textColor="@android:color/white" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="12dp"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners"
+                    android:contentDescription="@string/category_furniture"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/furniture" />
 
-                <TextView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryFootwear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/grey_tint"
-                    android:padding="12dp"
-                    android:text="Footwear"
-                    android:textColor="@android:color/white" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="12dp"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners"
+                    android:contentDescription="@string/category_footwear"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/footwear" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -78,9 +80,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/horizontalScrollView"
-            android:layout_marginTop="8dp"
+            android:background="@color/black_background"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/filterTextView"
@@ -108,6 +110,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/filterLayout"
             android:layout_marginBottom="44dp"
+            android:background="@color/black_background"
             android:padding="8dp" />
 
         <TextView

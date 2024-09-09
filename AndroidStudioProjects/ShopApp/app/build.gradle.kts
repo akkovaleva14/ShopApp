@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":data"))
     implementation(libs.androidx.recyclerview)
     implementation(project(":network"))
+    implementation(libs.androidx.ui.graphics.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
