@@ -1,5 +1,6 @@
 package com.example.shopapp
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -26,15 +27,14 @@ class ProductAdapter : ListAdapter<Product, ProductAdapter.ProductViewHolder>(Pr
             binding.productName.text = product.name
             binding.productPrice.text = "${product.price} ${itemView.context.getString(R.string.currency_symbol)}"
 
-            // Проверка наличия скидочной цены
             if (product.discountedPrice != null) {
                 binding.productDiscountedPrice.text = "${product.discountedPrice} ${itemView.context.getString(R.string.currency_symbol)}"
                 binding.productDiscountedPrice.visibility = android.view.View.VISIBLE
+                binding.productPrice.paintFlags =  binding.productPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
                 binding.productDiscountedPrice.visibility = android.view.View.GONE
             }
 
-            // Использование Glide для загрузки изображения
             Glide.with(itemView.context)
                 .load(product.images.firstOrNull()) // Загружаем первое изображение из списка
                 .placeholder(R.drawable.placeholder_image) // Добавляем placeholder, пока изображение загружается

@@ -17,6 +17,6 @@
     <string name="entrance">Вход</string>
     <string name="toggle_password_visibility">Toggle Password Visibility</string>
     <string name="title_entrance">Вход</string>
-    <string name="currency_symbol">RUB</string>
+    <string name="currency_symbol">₽</string>
 
 </resources>
