@@ -19,7 +19,7 @@ class ProductListFragment : Fragment() {
     private lateinit var viewModel: ProductListViewModel
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
-    private var isAscending = true // Track the sorting order
+    private var isAscending = false // Default to descending order (убывание цены)
     private var selectedCategory: String? = "computers" // Default category
 
     override fun onCreateView(
@@ -32,6 +32,8 @@ class ProductListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("ProductListFragment", "onViewCreated called")
 
         viewModel = ViewModelProvider(this).get(ProductListViewModel::class.java)
 
@@ -47,7 +49,7 @@ class ProductListFragment : Fragment() {
             binding.errorTextView.visibility = View.GONE
             binding.retryButton.visibility = View.GONE
             binding.productProgressBar.visibility = View.GONE // Hide progress bar after loading
-            Log.d("ProductListFragment", "Products loaded successfully")
+            Log.d("ProductListFragment", "Products loaded successfully: ${products.size} items")
         })
 
         // Observe error messages
@@ -60,26 +62,33 @@ class ProductListFragment : Fragment() {
         })
 
         binding.retryButton.setOnClickListener {
-            loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
+            Log.d("ProductListFragment", "Retry button clicked")
+            loadProducts(selectedCategory, getSortOrder())
         }
+
+        // Set default filter icon to descending (убывание цены)
+        binding.filterToggleButton.setImageResource(R.drawable.ic_down)
 
         // Handle filter toggle button
         binding.filterToggleButton.setOnClickListener {
+            Log.d("ProductListFragment", "Filter toggle button clicked. isAscending before toggle: $isAscending")
             isAscending = !isAscending
             binding.filterToggleButton.setImageResource(
-                if (isAscending) R.drawable.ic_down else R.drawable.ic_up
+                if (isAscending) R.drawable.ic_up else R.drawable.ic_down
             )
-            loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
+            Log.d("ProductListFragment", "isAscending after toggle: $isAscending")
+            loadProducts(selectedCategory, getSortOrder())
         }
 
         // Handle category selection (hardcoded categories)
         setCategoryListeners()
 
-        // Load initial data with default category and ascending price order
-        loadProducts(selectedCategory, "asc")
+        // Load initial data with default category and descending price order
+        loadProducts(selectedCategory, getSortOrder())
     }
 
     private fun setCategoryListeners() {
+        Log.d("ProductListFragment", "Setting category listeners")
         val categories = mapOf(
             binding.categoryComputers to "computers",
             binding.categoryBags to "bags",
@@ -88,21 +97,27 @@ class ProductListFragment : Fragment() {
 
         for ((view, category) in categories) {
             view.setOnClickListener {
+                Log.d("ProductListFragment", "Category selected: $category")
                 selectedCategory = category
-                loadProducts(selectedCategory, if (isAscending) "asc" else "desc")
-                Log.d("ProductListFragment", "Selected category: $category")
+                loadProducts(selectedCategory, getSortOrder())
             }
         }
     }
 
     private fun loadProducts(category: String?, sort: String?) {
+        Log.d("ProductListFragment", "Loading products for category: $category with sort: $sort")
         binding.productProgressBar.visibility = View.VISIBLE // Show progress bar during load
         viewModel.loadProducts(category, sort)
-        Log.d("ProductListFragment", "Loading products for category: $category with sort: $sort")
+    }
+
+    private fun getSortOrder(): String {
+        // Return "price" for ascending and "-price" for descending
+        return if (isAscending) "price" else "-price"
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        Log.d("ProductListFragment", "onDestroyView called")
     }
 }
