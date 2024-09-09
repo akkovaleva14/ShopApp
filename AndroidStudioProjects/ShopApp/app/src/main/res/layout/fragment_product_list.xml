@@ -17,6 +17,7 @@
             android:padding="8dp">
 
             <LinearLayout
+                android:id="@+id/categoryContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -49,6 +50,26 @@
                     android:padding="12dp"
                     android:text="Clothing"
                     android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/categoryFurniture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:background="@color/grey_tint"
+                    android:padding="12dp"
+                    android:text="Furniture"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/categoryFootwear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:background="@color/grey_tint"
+                    android:padding="12dp"
+                    android:text="Footwear"
+                    android:textColor="@android:color/white" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -67,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
-                android:text="Фильтр по возрастанию/убыванию цены"
+                android:text="@string/price_filter"
                 android:textColor="@android:color/white" />
 
             <ImageButton
@@ -76,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?attr/selectableItemBackground"
-                android:contentDescription="Price filter toggle"
+                android:contentDescription="@string/price_filter_toggle"
                 android:padding="8dp"
                 android:src="@drawable/ic_down" />
         </LinearLayout>
@@ -94,7 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Ошибка при загрузке товаров"
+            android:text="@string/error_while_loading_products"
             android:textColor="@android:color/holo_red_dark"
             android:visibility="gone" />
 

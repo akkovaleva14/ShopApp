@@ -19,7 +19,7 @@ class ProductListFragment : Fragment() {
     private lateinit var viewModel: ProductListViewModel
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
-    private var isAscending = false // Default to descending order (убывание цены)
+    private var isAscending = true // Default to ascending order (возрастание цены)
     private var selectedCategory: String? = "computers" // Default category
 
     override fun onCreateView(
@@ -66,12 +66,15 @@ class ProductListFragment : Fragment() {
             loadProducts(selectedCategory, getSortOrder())
         }
 
-        // Set default filter icon to descending (убывание цены)
-        binding.filterToggleButton.setImageResource(R.drawable.ic_down)
+        // Set default filter icon to ascending (возрастание цены)
+        binding.filterToggleButton.setImageResource(R.drawable.ic_up)
 
         // Handle filter toggle button
         binding.filterToggleButton.setOnClickListener {
-            Log.d("ProductListFragment", "Filter toggle button clicked. isAscending before toggle: $isAscending")
+            Log.d(
+                "ProductListFragment",
+                "Filter toggle button clicked. isAscending before toggle: $isAscending"
+            )
             isAscending = !isAscending
             binding.filterToggleButton.setImageResource(
                 if (isAscending) R.drawable.ic_up else R.drawable.ic_down
@@ -83,7 +86,7 @@ class ProductListFragment : Fragment() {
         // Handle category selection (hardcoded categories)
         setCategoryListeners()
 
-        // Load initial data with default category and descending price order
+        // Load initial data with default category and ascending price order
         loadProducts(selectedCategory, getSortOrder())
     }
 
@@ -92,7 +95,9 @@ class ProductListFragment : Fragment() {
         val categories = mapOf(
             binding.categoryComputers to "computers",
             binding.categoryBags to "bags",
-            binding.categoryClothing to "clothing"
+            binding.categoryClothing to "clothing",
+            binding.categoryFurniture to "furniture",
+            binding.categoryFootwear to "footwear"
         )
 
         for ((view, category) in categories) {
