@@ -18,7 +18,6 @@
     <string name="toggle_password_visibility">Toggle Password Visibility</string>
     <string name="title_entrance">Вход</string>
     <string name="currency_symbol">₽</string>
-    <string name="price_filter">Фильтр по возрастанию/убыванию цены</string>
     <string name="price_filter_toggle">Price filter toggle</string>
     <string name="error_while_loading_products">Ошибка при загрузке товаров</string>
     <string name="category_computers">Computers</string>
@@ -26,5 +25,7 @@
     <string name="category_clothing">Clothing</string>
     <string name="category_furniture">Furniture</string>
     <string name="category_footwear">Footwear</string>
+    <string name="previous_page">Previous page</string>
+    <string name="next_page">Next page</string>
 
 </resources>

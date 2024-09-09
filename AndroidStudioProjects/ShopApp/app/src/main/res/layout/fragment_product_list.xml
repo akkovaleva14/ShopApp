@@ -38,40 +38,40 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="12dp"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners"
                     android:contentDescription="@string/category_bags"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/bags" />
+                    android:src="@drawable/bags"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryClothing"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="12dp"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners"
                     android:contentDescription="@string/category_clothing"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/clothing" />
+                    android:src="@drawable/clothing"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryFurniture"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="12dp"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners"
                     android:contentDescription="@string/category_furniture"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/furniture" />
+                    android:src="@drawable/furniture"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryFootwear"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="12dp"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners"
                     android:contentDescription="@string/category_footwear"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/footwear" />
+                    android:src="@drawable/footwear"
+                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -81,27 +81,41 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/horizontalScrollView"
             android:background="@color/black_background"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="4dp">
 
-            <TextView
-                android:id="@+id/filterTextView"
+            <ImageButton
+                android:id="@+id/previousPageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/previous_page"
+                android:enabled="false"
                 android:padding="8dp"
-                android:text="@string/price_filter"
-                android:textColor="@android:color/white" />
+                android:src="@drawable/ic_previous" />
 
             <ImageButton
                 android:id="@+id/filterToggleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@string/price_filter_toggle"
                 android:padding="8dp"
                 android:src="@drawable/ic_down" />
+
+            <ImageButton
+                android:id="@+id/nextPageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/next_page"
+                android:enabled="true"
+                android:padding="8dp"
+                android:src="@drawable/ic_next" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
