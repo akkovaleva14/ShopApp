@@ -21,6 +21,7 @@ class ProductImageAdapter(private val images: List<String>) :
         Glide.with(holder.itemView.context)
             .load(imageUrl)
             .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.error_image)
             .into(holder.binding.productItemImage)
     }
 

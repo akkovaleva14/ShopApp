@@ -30,5 +30,6 @@
     <string name="try_again">Повторить</string>
     <string name="Buy">Купить</string>
     <string name="title_product">Title of the product\n</string>
+    <string name="title_error">Error</string>
 
 </resources>

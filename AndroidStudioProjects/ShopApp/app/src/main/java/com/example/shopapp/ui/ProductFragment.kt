@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.domain.viewmodelfactories.ProductViewModelFactory
 import com.example.domain.repositories.ProductItemRepository
@@ -15,6 +16,7 @@ import com.example.domain.viewmodels.ProductViewModel
 import com.example.shopapp.databinding.FragmentProductBinding
 import com.example.shopapp.adapters.ProductImageAdapter
 import com.example.network.RetrofitClient
+import com.example.shopapp.R
 
 class ProductFragment : Fragment() {
 
@@ -29,7 +31,7 @@ class ProductFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentProductBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,52 +39,61 @@ class ProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Инициализируем адаптер для отображения изображений
+        // Initialize adapter for displaying images
         productImageAdapter = ProductImageAdapter(emptyList())
         binding.productImageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = productImageAdapter
         }
 
-        // Получаем ID продукта из аргументов
+        // Get product ID from arguments
         val productId = arguments?.getString("productId") ?: return
 
-        // Загрузка данных о продукте
+        // Load product data
+        binding.productProgressBar.visibility = View.VISIBLE // Show ProgressBar
         viewModel.loadProduct(productId)
 
-        // Наблюдаем за изменениями в LiveData
+        // Observe product LiveData
         viewModel.product.observe(viewLifecycleOwner) { product ->
-            product?.let {
-                // Обновляем UI с помощью данных о продукте
+            binding.productProgressBar.visibility = View.GONE // Hide ProgressBar
+            if (product != null) {
+                // Update UI with product data
                 with(binding) {
-                    productName.text = it.name
-                    productPrice.text = "${it.price}₽"
-                    productDiscountedPrice.text = it.discountedPrice?.let { price -> "${price}₽" } ?: ""
-                    productDescription.text = it.description
-                    productCategory.text = it.category.joinToString(", ")
+                    productName.text = product.name
+                    productPrice.text = "${product.price}₽"
+                    productDiscountedPrice.text =
+                        product.discountedPrice?.let { price -> "${price}₽" } ?: ""
+                    productDescription.text = product.description
+                    productCategory.text = product.category.joinToString(", ")
 
-                    // Зачёркивание старой цены
+                    // Strike-through old price
                     productPrice.paintFlags = productPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
-                    // Обновляем адаптер с изображениями продукта
-                    productImageAdapter = ProductImageAdapter(it.images)
+                    // Update adapter with product images
+                    productImageAdapter = ProductImageAdapter(product.images)
                     productImageRecyclerView.adapter = productImageAdapter
                 }
+            } else {
+                // Show error message if product is null
+                binding.errorTextView.visibility = View.VISIBLE
+                binding.errorTextView.text = "Product not found or an error occurred."
             }
         }
 
-        // Обработка нажатия на кнопку назад
         binding.backButton.setOnClickListener {
-            parentFragmentManager.setFragmentResult("REQUEST_KEY", Bundle().apply {
+            val bundle = Bundle().apply {
                 putString("CATEGORY", arguments?.getString("CATEGORY"))
                 putString("SORT_ORDER", arguments?.getString("SORT_ORDER"))
-            })
-            parentFragmentManager.popBackStack()
+            }
+            findNavController().navigate(R.id.action_productFragment_to_productListFragment, bundle)
         }
 
-        // Обработка нажатия на кнопку "Купить"
         binding.buyButton.setOnClickListener {
-            Toast.makeText(requireContext(), "We are run out of this item. Sorry!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "We are run out of this item. Sorry!",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
