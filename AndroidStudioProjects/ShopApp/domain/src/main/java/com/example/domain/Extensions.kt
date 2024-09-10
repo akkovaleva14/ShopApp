@@ -8,11 +8,12 @@ fun Product.toEntity() = ProductEntity(
     name = name,
     price = price,
     discountedPrice = discountedPrice,
-    images = images.joinToString(","),
+    images = images.toString(),
     description = description,
     productRating = productRating,
     brand = brand,
-    productSpecifications = productSpecifications.toString()
+    productSpecifications = productSpecifications.toString(),
+    category = category.toString()
 )
 
 fun ProductEntity.toProduct() = Product(
@@ -24,5 +25,6 @@ fun ProductEntity.toProduct() = Product(
     description = description,
     productRating = productRating,
     brand = brand,
-    productSpecifications = productSpecifications
+    productSpecifications = productSpecifications.split(","),
+    category = category.split(",")
 )

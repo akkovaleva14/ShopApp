@@ -28,5 +28,7 @@
     <string name="previous_page">Previous page</string>
     <string name="next_page">Next page</string>
     <string name="try_again">Повторить</string>
+    <string name="Buy">Купить</string>
+    <string name="title_product">Title of the product\n</string>
 
 </resources>

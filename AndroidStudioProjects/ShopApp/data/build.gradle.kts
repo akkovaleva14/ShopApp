@@ -46,4 +46,8 @@ dependencies {
     implementation(libs.room.runtime)    // Room runtime
     implementation(libs.room.ktx)        // Room Kotlin Extensions
     kapt(libs.room.compiler)             // Room compiler for code generation
+
+    implementation(libs.gson.converter)
+    implementation(project(":network"))
+
 }

@@ -12,13 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.data.AppDatabase
-import com.example.domain.ProductListViewModel
-import com.example.domain.ProductListViewModelFactory
-import com.example.domain.ProductRepository
+import com.example.domain.viewmodels.ProductListViewModel
+import com.example.domain.viewmodelfactories.ProductListViewModelFactory
+import com.example.domain.repositories.ProductRepository
 import com.example.network.RetrofitClient
-import com.example.shopapp.ProductAdapter
+import com.example.shopapp.adapters.ProductAdapter
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentProductListBinding
 import com.example.shopapp.utils.NetworkUtils
@@ -57,8 +58,14 @@ class ProductListFragment : Fragment() {
             ProductListViewModel::class.java
         )
 
-        productAdapter = ProductAdapter()
-        binding.productRecyclerView.layoutManager = GridLayoutManager(context, 2) // 2 columns
+        productAdapter = ProductAdapter { product ->
+            val bundle = Bundle().apply {
+                putString("productId", product.id)
+            }
+            findNavController().navigate(R.id.productFragment, bundle)
+        }
+
+        binding.productRecyclerView.layoutManager = GridLayoutManager(context, 2)
         binding.productRecyclerView.adapter = productAdapter
 
         binding.retryButton.setOnClickListener {
@@ -70,7 +77,8 @@ class ProductListFragment : Fragment() {
                 }
             } else {
                 // Show Toast message and keep retry button visible
-                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -146,7 +154,8 @@ class ProductListFragment : Fragment() {
                     loadProducts(selectedCategory, getNetworkSortOrder())
                 } else {
                     retryCategory = category // Save the category to retry later
-                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                        .show()
                     binding.retryButton.visibility = View.VISIBLE
                     binding.productProgressBar.visibility = View.GONE
                 }

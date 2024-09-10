@@ -24,7 +24,11 @@
         android:name="com.example.shopapp.ui.ProductListFragment"
         android:label="@string/title_products"
         app:icon="@drawable/products"
-        tools:layout="@layout/fragment_product_list" />
+        tools:layout="@layout/fragment_product_list">
+        <action
+            android:id="@+id/action_productListFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_message"
@@ -55,6 +59,16 @@
         <action
             android:id="@+id/action_entranceFragment_to_profileFragment"
             app:destination="@id/navigation_profile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.example.shopapp.ui.ProductFragment"
+        android:label="@string/title_product"
+        tools:layout="@layout/fragment_product">
+        <argument
+            android:name="productId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

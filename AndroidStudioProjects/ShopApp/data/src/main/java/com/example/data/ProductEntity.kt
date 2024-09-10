@@ -13,5 +13,6 @@ data class ProductEntity(
     val description: String?,
     val productRating: Double?,
     val brand: String?,
-    val productSpecifications: String // Store as JSON string
+    val productSpecifications: String, // Store as JSON string
+    val category: String
 )

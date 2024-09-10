@@ -1,9 +1,10 @@
-package com.example.domain
+package com.example.domain.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.domain.repositories.AuthRepository
 import com.example.network.RegistrationRequest
 import com.example.network.RegistrationResponse
 import retrofit2.Call

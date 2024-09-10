@@ -7,19 +7,20 @@ import com.google.gson.annotations.SerializedName
 data class Product(
     @SerializedName("_id") val id: String,
     val name: String,
+    val category: List<String>,
     val price: Double,
     @SerializedName("discounted_price") val discountedPrice: Double?,
     val images: List<String>,
     val description: String?,
     @SerializedName("product_rating") val productRating: Double?,
     val brand: String?,
-    @SerializedName("product_specifications") val productSpecifications: Any // Используем Any, т.к. это может быть как объект, так и строка
+    @SerializedName("product_specifications") val productSpecifications: Any?
 )
 
-data class ProductSpecification(
-    val key: String,
-    val value: String
-)
+//data class ProductSpecification(
+//    val key: String,
+//    val value: String
+//)
 
 class ProductSpecificationsDeserializer : JsonDeserializer<Any> {
     override fun deserialize(
@@ -45,5 +46,5 @@ data class ProductResponse(
 
 data class ProductDetailsResponse(
     val status: String,
-    val data: Product
+    val data: Product?
 )

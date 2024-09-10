@@ -1,7 +1,10 @@
-package com.example.domain
+package com.example.domain.viewmodelfactories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.domain.repositories.AuthRepository
+import com.example.domain.repositories.TokenRepository
+import com.example.domain.viewmodels.EntranceViewModel
 
 class ViewModelFactory(
     private val authRepository: AuthRepository,

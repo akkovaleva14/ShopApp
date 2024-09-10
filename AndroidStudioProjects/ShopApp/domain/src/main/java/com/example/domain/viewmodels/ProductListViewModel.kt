@@ -1,9 +1,11 @@
-package com.example.domain
+package com.example.domain.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.repositories.ProductRepository
+import com.example.domain.toProduct
 import com.example.network.Product
 import kotlinx.coroutines.launch
 

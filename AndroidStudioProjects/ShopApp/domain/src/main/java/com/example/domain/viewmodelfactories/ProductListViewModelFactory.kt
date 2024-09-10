@@ -1,7 +1,9 @@
-package com.example.domain
+package com.example.domain.viewmodelfactories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.domain.repositories.ProductRepository
+import com.example.domain.viewmodels.ProductListViewModel
 
 class ProductListViewModelFactory(
     private val repository: ProductRepository

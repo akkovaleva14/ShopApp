@@ -1,10 +1,12 @@
-package com.example.domain
+package com.example.domain.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.repositories.AuthRepository
+import com.example.domain.repositories.TokenRepository
 import com.example.network.LoginRequest
 import com.example.network.LoginResponse
 import kotlinx.coroutines.launch

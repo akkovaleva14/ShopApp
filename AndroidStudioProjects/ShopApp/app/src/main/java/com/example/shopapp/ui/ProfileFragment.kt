@@ -11,9 +11,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentProfileBinding
-import com.example.domain.AuthRepository
-import com.example.domain.AuthViewModel
-import com.example.domain.AuthViewModelFactory
+import com.example.domain.repositories.AuthRepository
+import com.example.domain.viewmodels.AuthViewModel
+import com.example.domain.viewmodelfactories.AuthViewModelFactory
 import com.example.shopapp.utils.NetworkUtils
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {

@@ -1,7 +1,8 @@
-package com.example.domain
+package com.example.domain.repositories
 
 import com.example.data.ProductDao
 import com.example.data.ProductEntity
+import com.example.domain.toEntity
 import com.example.network.ApiService
 import com.example.network.Product
 import com.example.network.RetrofitClient

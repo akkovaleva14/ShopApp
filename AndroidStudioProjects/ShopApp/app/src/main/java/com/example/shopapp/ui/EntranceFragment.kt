@@ -11,10 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.data.TokenDatabase
-import com.example.domain.TokenRepository
-import com.example.domain.AuthRepository
-import com.example.domain.EntranceViewModel
-import com.example.domain.ViewModelFactory
+import com.example.domain.repositories.TokenRepository
+import com.example.domain.repositories.AuthRepository
+import com.example.domain.viewmodels.EntranceViewModel
+import com.example.domain.viewmodelfactories.ViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
 import com.example.shopapp.utils.NetworkUtils

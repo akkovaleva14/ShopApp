@@ -1,4 +1,4 @@
-package com.example.domain
+package com.example.domain.repositories
 
 import android.util.Log
 import com.example.data.TokenDao
