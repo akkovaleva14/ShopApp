@@ -23,7 +23,6 @@ class ProductFragment : Fragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var productImageAdapter: ProductImageAdapter
-    private var isLoading = true
 
     private val viewModel: ProductViewModel by activityViewModels {
         ProductViewModelFactory(ProductItemRepository(RetrofitClient.apiService))
