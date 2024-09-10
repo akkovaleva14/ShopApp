@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -46,8 +47,4 @@ dependencies {
     implementation(libs.room.runtime)    // Room runtime
     implementation(libs.room.ktx)        // Room Kotlin Extensions
     kapt(libs.room.compiler)             // Room compiler for code generation
-
-    implementation(libs.gson.converter)
-    implementation(project(":network"))
-
 }

@@ -38,12 +38,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.play.services.identity.credentials)
-    implementation(project(":network"))
-    implementation(project(":data"))
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(project(":network"))
+    implementation(project(":data"))
 
     // Network libraries
     implementation(libs.retrofit)

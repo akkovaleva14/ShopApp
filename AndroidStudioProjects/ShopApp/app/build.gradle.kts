@@ -50,14 +50,15 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(project(":domain"))
-    implementation(project(":data"))
     implementation(libs.androidx.recyclerview)
-    implementation(project(":network"))
-    implementation(libs.androidx.ui.graphics.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":network"))
 
     // Room components
     implementation(libs.room.runtime)    // Room runtime
