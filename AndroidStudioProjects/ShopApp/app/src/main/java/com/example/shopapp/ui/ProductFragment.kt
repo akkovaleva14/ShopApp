@@ -62,7 +62,7 @@ class ProductFragment : Fragment() {
                     productName.text = product.name
                     productPrice.text = "${product.price}₽"
                     productDiscountedPrice.text =
-                        product.discountedPrice?.let { price -> "${price}₽" } ?: ""
+                        product.discountedPrice?.let { price -> "${price}₽" } ?: "No discounted price available"
                     productDescription.text = product.description
                     productCategory.text = product.category.joinToString(", ")
 
@@ -72,11 +72,28 @@ class ProductFragment : Fragment() {
                     // Update adapter with product images
                     productImageAdapter = ProductImageAdapter(product.images)
                     productImageRecyclerView.adapter = productImageAdapter
+
+                    // Set visibility of TextViews based on data presence
+                    productName.visibility = if (product.name.isNotEmpty()) View.VISIBLE else View.GONE
+                    productPrice.visibility = if (product.price > 0) View.VISIBLE else View.GONE
+                    productDiscountedPrice.visibility = if (product.discountedPrice != null) View.VISIBLE else View.GONE
+                    productDescription.visibility = if (product.description?.isNotEmpty() == true) View.VISIBLE else View.GONE
+                    productCategory.visibility = if (product.category.isNotEmpty()) View.VISIBLE else View.GONE
                 }
             } else {
                 // Show error message if product is null
-                binding.errorTextView.visibility = View.VISIBLE
-                binding.errorTextView.text = "Product not found or an error occurred."
+                with(binding) {
+                    errorTextView.visibility = View.VISIBLE
+                    errorTextView.text = "Product not found or an error occurred."
+
+                    // Hide all product information views
+                    productName.visibility = View.GONE
+                    productPrice.visibility = View.GONE
+                    productDiscountedPrice.visibility = View.GONE
+                    productDescription.visibility = View.GONE
+                    productCategory.visibility = View.GONE
+                    productImageRecyclerView.visibility = View.GONE
+                }
             }
         }
 
