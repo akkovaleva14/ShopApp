@@ -23,6 +23,7 @@ class ProductFragment : Fragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var productImageAdapter: ProductImageAdapter
+    private var isLoading = true
 
     private val viewModel: ProductViewModel by activityViewModels {
         ProductViewModelFactory(ProductItemRepository(RetrofitClient.apiService))
@@ -49,20 +50,26 @@ class ProductFragment : Fragment() {
         // Get product ID from arguments
         val productId = arguments?.getString("productId") ?: return
 
+        // Show ProgressBar and hide Buy button initially
+        binding.productProgressBar.visibility = View.VISIBLE
+        binding.buyButton.visibility = View.GONE
+
         // Load product data
-        binding.productProgressBar.visibility = View.VISIBLE // Show ProgressBar
         viewModel.loadProduct(productId)
 
         // Observe product LiveData
         viewModel.product.observe(viewLifecycleOwner) { product ->
-            binding.productProgressBar.visibility = View.GONE // Hide ProgressBar
             if (product != null) {
                 // Update UI with product data
                 with(binding) {
+                    productProgressBar.visibility = View.GONE // Hide ProgressBar
+                    buyButton.visibility = View.VISIBLE // Show Buy button
+
                     productName.text = product.name
                     productPrice.text = "${product.price}₽"
                     productDiscountedPrice.text =
-                        product.discountedPrice?.let { price -> "${price}₽" } ?: "No discounted price available"
+                        product.discountedPrice?.let { price -> "${price}₽" }
+                            ?: "No discounted price available"
                     productDescription.text = product.description
                     productCategory.text = product.category.joinToString(", ")
 
@@ -74,15 +81,22 @@ class ProductFragment : Fragment() {
                     productImageRecyclerView.adapter = productImageAdapter
 
                     // Set visibility of TextViews based on data presence
-                    productName.visibility = if (product.name.isNotEmpty()) View.VISIBLE else View.GONE
+                    productName.visibility =
+                        if (product.name.isNotEmpty()) View.VISIBLE else View.GONE
                     productPrice.visibility = if (product.price > 0) View.VISIBLE else View.GONE
-                    productDiscountedPrice.visibility = if (product.discountedPrice != null) View.VISIBLE else View.GONE
-                    productDescription.visibility = if (product.description?.isNotEmpty() == true) View.VISIBLE else View.GONE
-                    productCategory.visibility = if (product.category.isNotEmpty()) View.VISIBLE else View.GONE
+                    productDiscountedPrice.visibility =
+                        if (product.discountedPrice != null) View.VISIBLE else View.GONE
+                    productDescription.visibility =
+                        if (product.description?.isNotEmpty() == true) View.VISIBLE else View.GONE
+                    productCategory.visibility =
+                        if (product.category.isNotEmpty()) View.VISIBLE else View.GONE
                 }
             } else {
                 // Show error message if product is null
                 with(binding) {
+                    productProgressBar.visibility = View.GONE // Hide ProgressBar
+                    buyButton.visibility = View.GONE // Hide Buy button
+
                     errorTextView.visibility = View.VISIBLE
                     errorTextView.text = "Product not found or an error occurred."
 
