@@ -5,17 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.network.Product
-import com.example.network.ProductDetailsResponse
+import com.example.domain.viewmodelfactories.ProductViewModelFactory
+import com.example.domain.repositories.ProductItemRepository
+import com.example.domain.viewmodels.ProductViewModel
 import com.example.shopapp.databinding.FragmentProductBinding
 import com.example.shopapp.adapters.ProductImageAdapter
+import com.example.network.RetrofitClient
 
 class ProductFragment : Fragment() {
 
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var productImageAdapter: ProductImageAdapter
+
+    private val viewModel: ProductViewModel by activityViewModels {
+        ProductViewModelFactory(ProductItemRepository(RetrofitClient.apiService))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,51 +35,44 @@ class ProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val images = listOf(
-            // Example image URLs; replace with actual data
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg"
-        )
-
-        productImageAdapter = ProductImageAdapter(images)
+        // Инициализируем адаптер для отображения изображений
+        productImageAdapter = ProductImageAdapter(emptyList())
         binding.productImageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = productImageAdapter
         }
 
-        // Load product details and update UI
-        loadProductDetails()
-    }
+        // Получаем ID продукта из аргументов
+        val productId = arguments?.getString("productId") ?: return
 
-    private fun loadProductDetails() {
-        // Example function to load product details and set UI data
-        // Replace with actual logic to fetch and bind product details
-        val product = ProductDetailsResponse(
-            status = "success",
-            data = Product(
-                id = "productId",
-                name = "Sample Product",
-                price = 1000.0,
-                discountedPrice = 800.0,
-                images = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg"),
-                description = "Product description",
-                productRating = 4.5,
-                brand = "Brand",
-                productSpecifications = null,
-                category = emptyList()
-            )
-        )
+        // Загрузка данных о продукте
+        viewModel.loadProduct(productId)
 
-        with(binding) {
-            productName.text = product.data!!.name
-            productPrice.text = "${product.data!!.price}₽"
-            productDiscountedPrice.text = "${product.data!!.discountedPrice}₽"
-            productDescription.text = product.data!!.description
-            productCategory.text = product.data!!.category.joinToString(", ")
+        // Наблюдаем за изменениями в LiveData
+        viewModel.product.observe(viewLifecycleOwner) { product ->
+            product?.let {
+                // Обновляем UI с помощью данных о продукте
+                with(binding) {
+                    productName.text = it.name
+                    productPrice.text = "${it.price}₽"
+                    productDiscountedPrice.text = it.discountedPrice?.let { price -> "${price}₽" } ?: ""
+                    productDescription.text = it.description
+                    productCategory.text = it.category.joinToString(", ")
 
-            // Update adapter with product images
-            productImageAdapter = ProductImageAdapter(product.data!!.images)
-            productImageRecyclerView.adapter = productImageAdapter
+                    // Обновляем адаптер с изображениями продукта
+                    productImageAdapter = ProductImageAdapter(it.images)
+                    productImageRecyclerView.adapter = productImageAdapter
+                }
+            }
+        }
+
+        // Обработка нажатия на кнопку назад
+        binding.backButton.setOnClickListener {
+            parentFragmentManager.setFragmentResult("REQUEST_KEY", Bundle().apply {
+                putString("CATEGORY", arguments?.getString("CATEGORY"))
+                putString("SORT_ORDER", arguments?.getString("SORT_ORDER"))
+            })
+            parentFragmentManager.popBackStack()
         }
     }
 
