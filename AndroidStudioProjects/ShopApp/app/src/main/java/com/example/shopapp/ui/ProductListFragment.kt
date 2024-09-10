@@ -1,16 +1,17 @@
 package com.example.shopapp.ui
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.data.AppDatabase
 import com.example.domain.ProductListViewModel
@@ -20,6 +21,7 @@ import com.example.network.RetrofitClient
 import com.example.shopapp.ProductAdapter
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentProductListBinding
+import com.example.shopapp.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,6 +34,7 @@ class ProductListFragment : Fragment() {
     private lateinit var productAdapter: ProductAdapter
     private var isAscending = true // Default to ascending order
     private var selectedCategory: String? = "computers" // Default category
+    private var retryCategory: String? = null // To store the category to retry
     private val ioScope = CoroutineScope(Dispatchers.IO) // CoroutineScope for IO operations
 
     override fun onCreateView(
@@ -58,6 +61,19 @@ class ProductListFragment : Fragment() {
         binding.productRecyclerView.layoutManager = GridLayoutManager(context, 2) // 2 columns
         binding.productRecyclerView.adapter = productAdapter
 
+        binding.retryButton.setOnClickListener {
+            // Check network availability and attempt to reload products
+            if (NetworkUtils.isInternetAvailable(requireContext())) {
+                // Retry the category selection that failed
+                retryCategory?.let {
+                    loadProducts(it, getNetworkSortOrder())
+                }
+            } else {
+                // Show Toast message and keep retry button visible
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // Observe products data
         viewModel.products.observe(viewLifecycleOwner, Observer { products ->
             productAdapter.submitList(products)
@@ -79,16 +95,28 @@ class ProductListFragment : Fragment() {
         // Handle filter toggle button
         binding.filterToggleButton.setImageResource(R.drawable.ic_up)
 
-        // Handle filter toggle button
         binding.filterToggleButton.setOnClickListener {
             Log.d(
                 "ProductListFragment",
                 "Filter toggle button clicked. isAscending before toggle: $isAscending"
             )
+
+            // Переключаем порядок сортировки
             isAscending = !isAscending
             binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
             Log.d("ProductListFragment", "isAscending after toggle: $isAscending")
-            loadProducts(selectedCategory, getNetworkSortOrder())
+
+            // Загружаем продукты, учитывая текущий статус интернет-соединения
+            if (NetworkUtils.isInternetAvailable(requireContext())) {
+                Log.d(
+                    "ProductListFragment",
+                    "Internet is available, reloading products from server"
+                )
+                loadProducts(selectedCategory, getNetworkSortOrder())
+            } else {
+                Log.d("ProductListFragment", "No internet connection, loading products from cache")
+                loadCachedProducts(getCacheSortOrder())
+            }
         }
 
         // Handle category selection (hardcoded categories)
@@ -111,20 +139,48 @@ class ProductListFragment : Fragment() {
         for ((view, category) in categories) {
             view.setOnClickListener {
                 Log.d("ProductListFragment", "Category selected: $category")
-                selectedCategory = category
-                loadProducts(selectedCategory, getNetworkSortOrder())
+
+                if (NetworkUtils.isInternetAvailable(requireContext())) {
+                    selectedCategory = category
+                    retryCategory = null // Clear retryCategory when internet is available
+                    loadProducts(selectedCategory, getNetworkSortOrder())
+                } else {
+                    retryCategory = category // Save the category to retry later
+                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+                    binding.retryButton.visibility = View.VISIBLE
+                    binding.productProgressBar.visibility = View.GONE
+                }
             }
         }
     }
 
     private fun loadProducts(category: String?, sort: String) {
         Log.d("ProductListFragment", "Loading products for category: $category with sort: $sort")
-        if (isNetworkAvailable()) {
+
+        if (NetworkUtils.isInternetAvailable(requireContext())) {
             Log.d("ProductListFragment", "Internet available, fetching from server")
-            binding.productProgressBar.visibility = View.VISIBLE // Show progress bar during load
+
+            // Показываем индикатор загрузки только если интернет доступен
+            binding.productProgressBar.visibility = View.VISIBLE
+            binding.retryButton.visibility = View.GONE // Скрываем кнопку повтора во время загрузки
+
+            // Стартуем корутину для скрытия ProgressBar через 5 секунд, если товары не загрузились
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(5000) // Задержка 5 секунд
+
+                // Если товары не загружены через 5 секунд, показываем кнопку повтора и скрываем ProgressBar
+                if (viewModel.products.value.isNullOrEmpty()) {
+                    binding.productProgressBar.visibility = View.GONE
+                    binding.retryButton.visibility = View.VISIBLE
+                }
+            }
+
+            // Загружаем товары из ViewModel
             viewModel.loadProducts(category, sort)
         } else {
             Log.d("ProductListFragment", "No internet connection, fetching from cache")
+
+            // Если интернета нет, ProgressBar не показываем
             loadCachedProducts(getCacheSortOrder())
         }
     }
@@ -132,6 +188,8 @@ class ProductListFragment : Fragment() {
     private fun loadCachedProducts(sortOrder: String) {
         Log.d("ProductListFragment", "Loading cached products with sort: $sortOrder")
         viewModel.loadCachedProducts(sortOrder)
+        // Убедитесь, что кнопка "Повторить" скрыта, если данные загружены из кэша
+        binding.retryButton.visibility = View.GONE
     }
 
     private fun getNetworkSortOrder(): String {
@@ -140,12 +198,6 @@ class ProductListFragment : Fragment() {
 
     private fun getCacheSortOrder(): String {
         return if (isAscending) "price_asc" else "price_desc"
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        return networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     override fun onDestroyView() {
