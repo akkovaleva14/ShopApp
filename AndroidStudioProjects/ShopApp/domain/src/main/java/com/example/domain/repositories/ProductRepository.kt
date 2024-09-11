@@ -9,26 +9,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ProductRepository(
-    private val apiService: ApiService, // ApiService passed in the constructor
+    private val apiService: ApiService,
     private val productDao: ProductDao
 ) {
 
-    suspend fun loadProducts(category: String?, sort: String?): Result<List<Product>> {
+    suspend fun loadProducts(category: String?, sort: String?, page: Int, limit: Int): Result<List<Product>> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.getProducts(
                     category = category,
                     minPrice = null,
                     maxPrice = null,
-                    sort = sort
+                    sort = sort,
+                    page = page,
+                    limit = limit
                 ).execute()
 
                 if (response.isSuccessful) {
                     val productResponse = response.body()
                     if (productResponse?.status == "success") {
                         val products = productResponse.Data
-                        productDao.clearCache() // Clear existing cache
-                        productDao.insertProducts(products.map { it.toEntity() }) // Cache new products
+                        productDao.clearCache()
+                        productDao.insertProducts(products.map { it.toEntity() })
                         Result.success(products)
                     } else {
                         Result.failure(Exception("Error loading products: ${productResponse?.status}"))
@@ -42,14 +44,15 @@ class ProductRepository(
         }
     }
 
-    // Function to get cached products from the database with sorting
-    suspend fun getCachedProducts(sortOrder: String): List<ProductEntity> {
+    suspend fun getCachedProducts(sortOrder: String, page: Int, limit: Int): List<ProductEntity> {
         return withContext(Dispatchers.IO) {
+            val offset = (page - 1) * limit
             when (sortOrder) {
-                "price_asc" -> productDao.getAllProductsSortedByPriceAsc()
-                "price_desc" -> productDao.getAllProductsSortedByPriceDesc()
-                else -> productDao.getAllProductsSortedByPriceAsc() // Default sorting
+                "price_asc" -> productDao.getProductsSortedByPriceAsc(limit, offset)
+                "price_desc" -> productDao.getProductsSortedByPriceDesc(limit, offset)
+                else -> productDao.getProductsSortedByPriceAsc(limit, offset)
             }
         }
     }
 }
+

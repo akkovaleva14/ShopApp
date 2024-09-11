@@ -14,9 +14,9 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertProducts(products: List<ProductEntity>)
 
-    @Query("SELECT * FROM products ORDER BY price ASC")
-    fun getAllProductsSortedByPriceAsc(): List<ProductEntity>
+    @Query("SELECT * FROM products ORDER BY price ASC LIMIT :limit OFFSET :offset")
+    fun getProductsSortedByPriceAsc(limit: Int, offset: Int): List<ProductEntity>
 
-    @Query("SELECT * FROM products ORDER BY price DESC")
-    fun getAllProductsSortedByPriceDesc(): List<ProductEntity>
+    @Query("SELECT * FROM products ORDER BY price DESC LIMIT :limit OFFSET :offset")
+    fun getProductsSortedByPriceDesc(limit: Int, offset: Int): List<ProductEntity>
 }

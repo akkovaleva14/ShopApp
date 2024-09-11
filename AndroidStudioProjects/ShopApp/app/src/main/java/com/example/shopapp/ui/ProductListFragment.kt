@@ -39,6 +39,8 @@ class ProductListFragment : Fragment() {
     private val ioScope = CoroutineScope(Dispatchers.IO) // CoroutineScope for IO operations
     private var lastCategory: String? = null
     private var lastSortOrder: String? = null
+    private var currentPage = 1
+    private val pageSize = 4
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,15 +53,14 @@ class ProductListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("ProductListFragment", "onViewCreated called")
-
         arguments?.let {
             val category = it.getString("CATEGORY")
             val sortOrder = it.getString("SORT_ORDER")
+            val pageNumber = it.getInt("PAGE_NUMBER", 1)  // Восстанавливаем номер страницы, по умолчанию 1
             if (category != null && sortOrder != null) {
-                // Восстанавливаем категорию и сортировку
                 selectedCategory = category
-                setNetworkSortOrder(sortOrder) // Обновляет иконку и состояние сортировки
+                setNetworkSortOrder(sortOrder)
+                currentPage = pageNumber  // Восстанавливаем текущую страницу
             }
         }
 
@@ -74,12 +75,13 @@ class ProductListFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("productId", product.id)
                     putString("CATEGORY", selectedCategory)
-                    putString("SORT_ORDER", getNetworkSortOrder())
+                    putString("SORT_ORDER", getSortOrder(true))
+                    putInt("PAGE_NUMBER", currentPage)
                 }
                 findNavController().navigate(R.id.productFragment, bundle)
             } else {
                 lastCategory = selectedCategory
-                lastSortOrder = getNetworkSortOrder()
+                lastSortOrder = getSortOrder(true)
                 showErrorFragment(product.id)
             }
         }
@@ -87,11 +89,22 @@ class ProductListFragment : Fragment() {
         binding.productRecyclerView.layoutManager = GridLayoutManager(context, 2)
         binding.productRecyclerView.adapter = productAdapter
 
+        binding.nextPageButton.setOnClickListener {
+            currentPage++
+            loadProducts(selectedCategory, currentPage)
+        }
+
+        binding.previousPageButton.setOnClickListener {
+            if (currentPage > 1) {
+                currentPage--
+                loadProducts(selectedCategory, currentPage)
+            }
+        }
+
         binding.retryButton.setOnClickListener {
-            // Check network availability and attempt to reload products
             if (NetworkUtils.isInternetAvailable(requireContext())) {
                 retryCategory?.let {
-                    loadProducts(it, getNetworkSortOrder())
+                    loadProducts(it, currentPage)
                 }
             } else {
                 Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
@@ -99,36 +112,29 @@ class ProductListFragment : Fragment() {
             }
         }
 
-        // Observe products data
         viewModel.products.observe(viewLifecycleOwner, Observer { products ->
             productAdapter.submitList(products)
             binding.retryButton.visibility = View.GONE
-            binding.productProgressBar.visibility = View.GONE // Hide progress bar after loading
-            Log.d("ProductListFragment", "Products loaded successfully: ${products.size} items")
+            binding.productProgressBar.visibility = View.GONE
         })
 
-        // Observe error messages
         viewModel.error.observe(viewLifecycleOwner, Observer { error ->
             binding.retryButton.visibility = View.VISIBLE
-            binding.productProgressBar.visibility = View.GONE // Hide progress bar on error
-            Log.e("ProductListFragment", "Error loading products: $error")
+            binding.productProgressBar.visibility = View.GONE
         })
 
         binding.filterToggleButton.setOnClickListener {
             isAscending = !isAscending
             binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
             if (NetworkUtils.isInternetAvailable(requireContext())) {
-                loadProducts(selectedCategory, getNetworkSortOrder())
+                loadProducts(selectedCategory, currentPage)
             } else {
-                loadCachedProducts(getCacheSortOrder())
+                loadCachedProducts(currentPage)
             }
         }
 
-        // Handle category selection (hardcoded categories)
         setCategoryListeners()
-
-        // Load initial data with default category and ascending price order
-        loadProducts(selectedCategory, getNetworkSortOrder())
+        loadProducts(selectedCategory, currentPage)
     }
 
     private fun setCategoryListeners() {
@@ -145,7 +151,7 @@ class ProductListFragment : Fragment() {
                 if (NetworkUtils.isInternetAvailable(requireContext())) {
                     selectedCategory = category
                     retryCategory = null
-                    loadProducts(selectedCategory, getNetworkSortOrder())
+                    loadProducts(selectedCategory, currentPage)
                 } else {
                     retryCategory = category
                     Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
@@ -157,34 +163,42 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    private fun loadProducts(category: String?, sort: String) {
+    private fun loadProducts(category: String?, page: Int) {
+        val sortOrder = getSortOrder(forNetwork = true)
         if (NetworkUtils.isInternetAvailable(requireContext())) {
             binding.productProgressBar.visibility = View.VISIBLE
             binding.retryButton.visibility = View.GONE
             viewLifecycleOwner.lifecycleScope.launch {
-                delay(5000) // 5 seconds delay
+                delay(5000)
                 if (viewModel.products.value.isNullOrEmpty()) {
                     binding.productProgressBar.visibility = View.GONE
                     binding.retryButton.visibility = View.VISIBLE
                 }
             }
-            viewModel.loadProducts(category, sort)
+            viewModel.loadProducts(category, sortOrder, page)
         } else {
-            loadCachedProducts(getCacheSortOrder())
+            loadCachedProducts(page)
         }
     }
 
-    private fun loadCachedProducts(sortOrder: String) {
-        viewModel.loadCachedProducts(sortOrder)
+    private fun loadCachedProducts(page: Int) {
+        val sortOrder = getSortOrder(forNetwork = false)
+        viewModel.loadCachedProducts(sortOrder, page)
         binding.retryButton.visibility = View.GONE
     }
 
-    private fun getNetworkSortOrder(): String {
-        return if (isAscending) "price" else "-price"
+    private fun getSortOrder(forNetwork: Boolean): String {
+        return if (isAscending) {
+            if (forNetwork) "price" else "price_asc"
+        } else {
+            if (forNetwork) "-price" else "price_desc"
+        }
     }
 
-    private fun getCacheSortOrder(): String {
-        return if (isAscending) "price_asc" else "price_desc"
+    private fun setNetworkSortOrder(sortOrder: String) {
+        lastSortOrder = sortOrder
+        isAscending = sortOrder == "price"
+        binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
     }
 
     private fun showErrorFragment(productId: String) {
@@ -192,22 +206,15 @@ class ProductListFragment : Fragment() {
             putString("productId", productId)
             putString("CATEGORY", lastCategory)
             putString("SORT_ORDER", lastSortOrder)
+            putInt("PAGE_NUMBER", currentPage)
         }
         findNavController().navigate(R.id.errorFragment, bundle)
-    }
-
-    private fun setNetworkSortOrder(sortOrder: String) {
-        lastSortOrder = sortOrder
-        isAscending = sortOrder == "price" // Проверка на тип сортировки
-        // Устанавливаем соответствующую иконку для filterToggleButton
-        binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        ioScope.cancel() // Cancel any ongoing coroutines
-        Log.d("ProductListFragment", "onDestroyView called")
+        ioScope.cancel()
     }
 }

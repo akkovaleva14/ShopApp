@@ -17,9 +17,12 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
-    fun loadProducts(category: String?, sort: String?) {
+    private var currentPage = 1
+    private val pageSize = 4 // 4 товара на странице
+
+    fun loadProducts(category: String?, sort: String?, page: Int) {
         viewModelScope.launch {
-            val result = repository.loadProducts(category, sort)
+            val result = repository.loadProducts(category, sort, page, pageSize)
             result.onSuccess { products ->
                 _products.value = products
             }.onFailure { exception ->
@@ -28,9 +31,9 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
         }
     }
 
-    fun loadCachedProducts(sortOrder: String) {
+    fun loadCachedProducts(sortOrder: String, page: Int) {
         viewModelScope.launch {
-            val products = repository.getCachedProducts(sortOrder).map { it.toProduct() }
+            val products = repository.getCachedProducts(sortOrder, page, pageSize).map { it.toProduct() }
             _products.value = products
         }
     }

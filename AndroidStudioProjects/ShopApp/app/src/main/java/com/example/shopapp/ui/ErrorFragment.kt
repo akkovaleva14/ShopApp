@@ -16,6 +16,7 @@ class ErrorFragment : Fragment() {
     private var productId: String? = null
     private var category: String? = null
     private var sortOrder: String? = null
+    private var pageNumber: Int = 1  // По умолчанию 1-я страница
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,11 +28,11 @@ class ErrorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Получаем переданные данные (productId, category, sortOrder)
         arguments?.let {
             productId = it.getString("productId")
             category = it.getString("CATEGORY")
             sortOrder = it.getString("SORT_ORDER")
+            pageNumber = it.getInt("PAGE_NUMBER", 1)
         }
 
         val tryAgainButton: Button = view.findViewById(R.id.tryAgainButton)
@@ -43,17 +44,18 @@ class ErrorFragment : Fragment() {
 
     private fun attemptRetry() {
         if (NetworkUtils.isInternetAvailable(requireContext())) {
-            // Если интернет доступен, повторяем запрос и переходим на ProductFragment
             productId?.let {
                 val bundle = Bundle().apply {
                     putString("productId", it)
+                    putString("CATEGORY", category)
+                    putString("SORT_ORDER", sortOrder)
+                    putInt("PAGE_NUMBER", pageNumber)
                 }
                 findNavController().navigate(R.id.productFragment, bundle)
             } ?: run {
                 Toast.makeText(context, "Не получилось! Попробуйте еще раз", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // Если интернет недоступен, показываем тост с ошибкой
             Toast.makeText(context, "Не получилось! Попробуйте еще раз", Toast.LENGTH_SHORT).show()
         }
     }

@@ -114,6 +114,7 @@ class ProductFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("CATEGORY", arguments?.getString("CATEGORY"))
                 putString("SORT_ORDER", arguments?.getString("SORT_ORDER"))
+                arguments?.getInt("PAGE_NUMBER", 1)?.let { it1 -> putInt("PAGE_NUMBER", it1) }  // Возвращаем номер страницы
             }
             findNavController().navigate(R.id.action_productFragment_to_productListFragment, bundle)
         }
