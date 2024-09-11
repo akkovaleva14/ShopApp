@@ -2,6 +2,7 @@ package com.example.shopapp.ui
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,33 +10,39 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.data.TokenDatabase
-import com.example.domain.repositories.TokenRepository
 import com.example.domain.repositories.AuthRepository
+import com.example.domain.repositories.TokenRepository
 import com.example.domain.viewmodels.EntranceViewModel
 import com.example.domain.viewmodelfactories.ViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
 import com.example.shopapp.utils.NetworkUtils
+import kotlinx.coroutines.launch
 
 class EntranceFragment : Fragment(R.layout.fragment_entrance) {
 
-    private val tokenDatabase by lazy {
-        TokenDatabase.getDatabase(requireContext())
-    }
-    private val tokenRepository by lazy {
-        TokenRepository(tokenDatabase.tokenDao())
-    }
-    private val authRepository = AuthRepository()
+    private lateinit var tokenDatabase: TokenDatabase
+    private lateinit var tokenRepository: TokenRepository
+
     private val entranceViewModel: EntranceViewModel by viewModels {
-        ViewModelFactory(authRepository, tokenRepository)
+        ViewModelFactory(AuthRepository(tokenRepository), tokenRepository)
     }
 
     private var _binding: FragmentEntranceBinding? = null
     private val binding get() = _binding!!
 
     private var isPasswordVisible = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Initialize tokenDatabase and tokenRepository before they are used by ViewModel
+        tokenDatabase = TokenDatabase.getDatabase(requireContext())
+        tokenRepository = TokenRepository(tokenDatabase.tokenDao())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,19 +56,20 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Логика для отображения и скрытия пароля
         binding.btnShowHidePassword.setOnClickListener {
             togglePasswordVisibility()
         }
 
-        // Клик на кнопку входа
         binding.btnLogin.setOnClickListener {
             if (NetworkUtils.isInternetAvailable(requireContext())) {
                 val phoneOrEmail = binding.etPhoneOrEmail.text.toString()
                 val password = binding.etPassword.text.toString()
 
                 if (validateInput(phoneOrEmail, password)) {
-                    entranceViewModel.loginUser(phoneOrEmail, password)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        Log.d("EntranceFragment", "Attempting login")
+                        entranceViewModel.loginUser(phoneOrEmail, password)
+                    }
                 }
             } else {
                 Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
@@ -69,18 +77,18 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
             }
         }
 
-        // Наблюдаем за состоянием загрузки
         entranceViewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
             if (isLoading) {
+                Log.d("EntranceFragment", "Showing progress bar")
                 binding.progressBar.visibility = View.VISIBLE
                 binding.btnLogin.visibility = View.GONE
             } else {
+                Log.d("EntranceFragment", "Hiding progress bar")
                 binding.progressBar.visibility = View.GONE
                 binding.btnLogin.visibility = View.VISIBLE
             }
         })
 
-        // Наблюдаем за результатом авторизации
         entranceViewModel.loginResult.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess) {
                 findNavController().navigate(R.id.action_entranceFragment_to_productsFragment)

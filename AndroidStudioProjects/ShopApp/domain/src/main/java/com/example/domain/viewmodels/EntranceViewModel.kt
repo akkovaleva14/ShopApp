@@ -25,12 +25,11 @@ class EntranceViewModel(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    // LiveData для отслеживания состояния загрузки
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun loginUser(email: String, password: String) {
-        _isLoading.value = true // Начало загрузки
+    suspend fun loginUser(email: String, password: String) {
+        _isLoading.value = true
 
         val request = LoginRequest(email, password)
         Log.d("EntranceViewModel", "Attempting to login user with email: $email")
@@ -40,12 +39,11 @@ class EntranceViewModel(
                 call: Call<LoginResponse>,
                 response: Response<LoginResponse>
             ) {
-                _isLoading.value = false // Окончание загрузки
+                _isLoading.value = false
 
                 if (response.isSuccessful) {
                     _loginResult.value = true
                     Log.d("EntranceViewModel", "Login successful for email: $email")
-                    // Сохраняем токен в локальное хранилище
                     val token = response.body()?.token
                     if (token != null) {
                         Log.d("EntranceViewModel", "Saving token received from server: $token")
@@ -65,8 +63,7 @@ class EntranceViewModel(
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                _isLoading.value = false // Окончание загрузки при ошибке
-
+                _isLoading.value = false
                 _loginResult.value = false
                 Log.e("EntranceViewModel", "Login error: ${t.message}")
                 _error.value = "An error occurred: ${t.message}"

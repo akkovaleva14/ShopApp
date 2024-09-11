@@ -5,13 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.domain.repositories.AuthRepository
+import com.example.domain.repositories.TokenRepository
 import com.example.network.RegistrationRequest
 import com.example.network.RegistrationResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class AuthViewModel(
+    private val authRepository: AuthRepository,
+    private val tokenRepository: TokenRepository
+) : ViewModel() {
 
     private val _registrationResult = MutableLiveData<Boolean>()
     val registrationResult: LiveData<Boolean> = _registrationResult
@@ -22,7 +26,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun registerUser(name: String, email: String, password: String, cpassword: String) {
+    suspend fun registerUser(name: String, email: String, password: String, cpassword: String) {
         val request = RegistrationRequest(name, email, password, cpassword)
         Log.d("AuthViewModel", "Attempting to register user with email: $email")
 

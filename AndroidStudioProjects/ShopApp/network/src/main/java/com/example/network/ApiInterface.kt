@@ -3,6 +3,7 @@ package com.example.network
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,7 +13,10 @@ interface ApiService {
     fun registerUser(@Body request: RegistrationRequest): Call<RegistrationResponse>
 
     @POST("app/v1/users/auth/login")
-    fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
+    fun loginUser(
+        @Body request: LoginRequest,
+        @Header("Authorization") token: String? = null // Add token as a header
+    ): Call<LoginResponse>
 
     @GET("app/v1/products")
     fun getProducts(

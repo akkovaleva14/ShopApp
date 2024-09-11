@@ -46,4 +46,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.gson.converter)
+    implementation(libs.logging.interceptor)
 }
