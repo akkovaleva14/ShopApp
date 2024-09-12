@@ -31,7 +31,7 @@
                     android:layout_marginEnd="12dp"
                     android:contentDescription="@string/category_computers"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/computers"
+                    android:src="@drawable/category_computers"
                     app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -41,7 +41,7 @@
                     android:layout_marginEnd="12dp"
                     android:contentDescription="@string/category_bags"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/bags"
+                    android:src="@drawable/category_bags"
                     app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -51,7 +51,7 @@
                     android:layout_marginEnd="12dp"
                     android:contentDescription="@string/category_clothing"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/clothing"
+                    android:src="@drawable/category_clothing"
                     app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -61,7 +61,7 @@
                     android:layout_marginEnd="12dp"
                     android:contentDescription="@string/category_furniture"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/furniture"
+                    android:src="@drawable/category_furniture"
                     app:shapeAppearanceOverlay="@style/RoundedCorners" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -71,7 +71,7 @@
                     android:layout_marginEnd="12dp"
                     android:contentDescription="@string/category_footwear"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/footwear"
+                    android:src="@drawable/category_footwear"
                     app:shapeAppearanceOverlay="@style/RoundedCorners" />
             </LinearLayout>
         </HorizontalScrollView>

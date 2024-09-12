@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/navigation_search"
         android:label="@string/title_search"
-        app:icon="@drawable/search" />
+        app:icon="@drawable/ic_search" />
 
     <fragment
         android:id="@+id/navigation_favorite"
         android:label="@string/title_favorite"
-        app:icon="@drawable/favorite" />
+        app:icon="@drawable/ic_favorite" />
 
     <fragment
         android:id="@+id/navigation_products"
         android:name="com.example.shopapp.ui.ProductListFragment"
         android:label="@string/title_products"
-        app:icon="@drawable/products"
+        app:icon="@drawable/ic_products"
         tools:layout="@layout/fragment_product_list">
         <action
             android:id="@+id/action_productListFragment_to_productFragment"
@@ -32,13 +32,13 @@
     <fragment
         android:id="@+id/navigation_message"
         android:label="@string/title_message"
-        app:icon="@drawable/message" />
+        app:icon="@drawable/ic_message" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.shopapp.ui.ProfileFragment"
         android:label="@string/title_profile"
-        app:icon="@drawable/profile"
+        app:icon="@drawable/ic_profile"
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_entranceFragment"

@@ -4,6 +4,7 @@ import com.google.gson.*
 import java.lang.reflect.Type
 import com.google.gson.annotations.SerializedName
 
+// Data class representing a product retrieved from the network.
 data class Product(
     @SerializedName("_id") val id: String,
     val name: String,
@@ -17,11 +18,8 @@ data class Product(
     @SerializedName("product_specifications") val productSpecifications: Any?
 )
 
-//data class ProductSpecification(
-//    val key: String,
-//    val value: String
-//)
-
+// Custom deserializer for product specifications.
+// Handles the deserialization of product specifications which can be a JSON object or a string.
 class ProductSpecificationsDeserializer : JsonDeserializer<Any> {
     override fun deserialize(
         json: JsonElement?,
@@ -29,21 +27,23 @@ class ProductSpecificationsDeserializer : JsonDeserializer<Any> {
         context: JsonDeserializationContext?
     ): Any {
         return if (json != null && json.isJsonObject) {
-            // Если это объект, возвращаем объект
+            // If the JSON element is an object, deserialize it into a JsonObject.
             context!!.deserialize<JsonObject>(json, JsonObject::class.java)
         } else {
-            // Если это строка, возвращаем строку
+            // If the JSON element is a string, return it as a string.
             json!!.asString
         }
     }
 }
 
+// Data class representing the response for fetching a list of products.
 data class ProductResponse(
     val status: String,
     val count: Int,
     val Data: List<Product>
 )
 
+// Data class representing the response for fetching details of a single product.
 data class ProductDetailsResponse(
     val status: String,
     val data: Product?

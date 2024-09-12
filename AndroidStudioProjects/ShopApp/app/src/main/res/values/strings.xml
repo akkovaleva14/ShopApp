@@ -31,5 +31,16 @@
     <string name="Buy">Купить</string>
     <string name="title_product">Title of the product\n</string>
     <string name="title_error">Error</string>
+    <string name="product_not_found_or_an_error_occurred">Product not found or an error occurred.</string>
+    <string name="no_discounted_price_available">No discounted price available</string>
+    <string name="we_are_run_out_of_this_item_sorry">We are run out of this item. Sorry!</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="failure_try_again">Не получилось! Попробуйте еще раз</string>
+    <string name="all_fields_are_required">All fields are required</string>
+    <string name="invalid_email_format">Invalid email format</string>
+    <string name="password_must_be_at_least_8_characters">Password must be at least 8 characters</string>
+    <string name="password_should_not_exceed_24_characters">Password should not exceed 24 characters</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="login_failed">Login failed</string>
 
 </resources>

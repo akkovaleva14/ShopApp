@@ -16,7 +16,7 @@ class ErrorFragment : Fragment() {
     private var productId: String? = null
     private var category: String? = null
     private var sortOrder: String? = null
-    private var pageNumber: Int = 1  // По умолчанию 1-я страница
+    private var pageNumber: Int = 1  // Default to the 1st page
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,23 +28,29 @@ class ErrorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Retrieve arguments passed to the fragment
         arguments?.let {
             productId = it.getString("productId")
             category = it.getString("CATEGORY")
             sortOrder = it.getString("SORT_ORDER")
-            pageNumber = it.getInt("PAGE_NUMBER", 1)
+            pageNumber = it.getInt("PAGE_NUMBER", 1) // Default to page 1 if not provided
         }
 
+        // Initialize the "Try Again" button
         val tryAgainButton: Button = view.findViewById(R.id.tryAgainButton)
 
+        // Set a click listener for the "Try Again" button
         tryAgainButton.setOnClickListener {
-            attemptRetry()
+            attemptRetry()  // Attempt to retry loading the product
         }
     }
 
+    // Method to attempt reloading the product when the user clicks "Try Again"
     private fun attemptRetry() {
+        // Check if the internet connection is available
         if (NetworkUtils.isInternetAvailable(requireContext())) {
             productId?.let {
+                // If productId is available, navigate to the product page with the same arguments
                 val bundle = Bundle().apply {
                     putString("productId", it)
                     putString("CATEGORY", category)
@@ -53,10 +59,14 @@ class ErrorFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.productFragment, bundle)
             } ?: run {
-                Toast.makeText(context, "Не получилось! Попробуйте еще раз", Toast.LENGTH_SHORT).show()
+                // If productId is null, show a failure message
+                Toast.makeText(context, getString(R.string.failure_try_again), Toast.LENGTH_SHORT)
+                    .show()
             }
         } else {
-            Toast.makeText(context, "Не получилось! Попробуйте еще раз", Toast.LENGTH_SHORT).show()
+            // Show a failure message if no internet connection is available
+            Toast.makeText(context, getString(R.string.failure_try_again), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 }

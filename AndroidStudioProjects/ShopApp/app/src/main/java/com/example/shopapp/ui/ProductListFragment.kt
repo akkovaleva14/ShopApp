@@ -1,7 +1,6 @@
 package com.example.shopapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,12 +34,12 @@ class ProductListFragment : Fragment() {
     private lateinit var productAdapter: ProductAdapter
     private var isAscending = true // Default to ascending order
     private var selectedCategory: String? = "computers" // Default category
-    private var retryCategory: String? = null // To store the category to retry
+    private var retryCategory: String? = null // To store the category for retrying
     private val ioScope = CoroutineScope(Dispatchers.IO) // CoroutineScope for IO operations
     private var lastCategory: String? = null
     private var lastSortOrder: String? = null
     private var currentPage = 1
-    private val pageSize = 4 // Количество товаров на одной странице
+    private val pageSize = 4 // Number of products per page
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,14 +52,15 @@ class ProductListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Restore category, sort order, and page number from arguments, if available
         arguments?.let {
             val category = it.getString("CATEGORY")
             val sortOrder = it.getString("SORT_ORDER")
-            val pageNumber = it.getInt("PAGE_NUMBER", 1)  // Восстанавливаем номер страницы, по умолчанию 1
+            val pageNumber = it.getInt("PAGE_NUMBER", 1)  // Default to page 1 if not provided
             if (category != null && sortOrder != null) {
                 selectedCategory = category
                 setNetworkSortOrder(sortOrder)
-                currentPage = pageNumber  // Восстанавливаем текущую страницу
+                currentPage = pageNumber  // Restore the current page
             }
         }
 
@@ -71,6 +71,7 @@ class ProductListFragment : Fragment() {
         )
 
         productAdapter = ProductAdapter { product ->
+            // Check for internet connection before navigating to product details
             if (NetworkUtils.isInternetAvailable(requireContext())) {
                 val bundle = Bundle().apply {
                     putString("productId", product.id)
@@ -107,20 +108,25 @@ class ProductListFragment : Fragment() {
                     loadProducts(it, currentPage)
                 }
             } else {
-                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    R.string.no_internet_connection,
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
 
+        // Observe the list of products and update the UI accordingly
         viewModel.products.observe(viewLifecycleOwner, Observer { products ->
             productAdapter.submitList(products)
             binding.retryButton.visibility = View.GONE
             binding.productProgressBar.visibility = View.GONE
 
-            // Деактивируем previousPageButton на первой странице
+            // Disable previousPageButton on the first page
             binding.previousPageButton.isEnabled = currentPage > 1
 
-            // Деактивируем nextPageButton, если меньше товаров, чем pageSize
+            // Disable nextPageButton if fewer products than pageSize
             binding.nextPageButton.isEnabled = products.size == pageSize
         })
 
@@ -129,6 +135,7 @@ class ProductListFragment : Fragment() {
             binding.productProgressBar.visibility = View.GONE
         })
 
+        // Toggle sorting order and reload products when the sort button is clicked
         binding.filterToggleButton.setOnClickListener {
             isAscending = !isAscending
             binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
@@ -143,6 +150,7 @@ class ProductListFragment : Fragment() {
         loadProducts(selectedCategory, currentPage)
     }
 
+    // Set click listeners for category buttons
     private fun setCategoryListeners() {
         val categories = mapOf(
             binding.categoryComputers to "computers",
@@ -160,7 +168,10 @@ class ProductListFragment : Fragment() {
                     loadProducts(selectedCategory, currentPage)
                 } else {
                     retryCategory = category
-                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_internet_connection), Toast.LENGTH_SHORT
+                    )
                         .show()
                     binding.retryButton.visibility = View.VISIBLE
                     binding.productProgressBar.visibility = View.GONE
@@ -169,6 +180,7 @@ class ProductListFragment : Fragment() {
         }
     }
 
+    // Load products based on the selected category and page number
     private fun loadProducts(category: String?, page: Int) {
         val sortOrder = getSortOrder(forNetwork = true)
         if (NetworkUtils.isInternetAvailable(requireContext())) {
@@ -187,12 +199,14 @@ class ProductListFragment : Fragment() {
         }
     }
 
+    // Load cached products when there is no network
     private fun loadCachedProducts(page: Int) {
         val sortOrder = getSortOrder(forNetwork = false)
         viewModel.loadCachedProducts(sortOrder, page)
         binding.retryButton.visibility = View.GONE
     }
 
+    // Get the sort order string based on ascending/descending and if it's for network or cache
     private fun getSortOrder(forNetwork: Boolean): String {
         return if (isAscending) {
             if (forNetwork) "price" else "price_asc"
@@ -201,12 +215,14 @@ class ProductListFragment : Fragment() {
         }
     }
 
+    // Set the sort order based on the network response
     private fun setNetworkSortOrder(sortOrder: String) {
         lastSortOrder = sortOrder
         isAscending = sortOrder == "price"
         binding.filterToggleButton.setImageResource(if (isAscending) R.drawable.ic_up else R.drawable.ic_down)
     }
 
+    // Navigate to the error fragment in case of network failure
     private fun showErrorFragment(productId: String) {
         val bundle = Bundle().apply {
             putString("productId", productId)
@@ -216,7 +232,6 @@ class ProductListFragment : Fragment() {
         }
         findNavController().navigate(R.id.errorFragment, bundle)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
-    // Инициализация репозитория токена
+    // Initialization of tokenDatabase and tokenRepository
     private val tokenDatabase by lazy {
         TokenDatabase.getDatabase(this)
     }
@@ -37,10 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        // Инициализация контроллера навигации
+        // Initialization of the navigation controller
         navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        // Конфигурация для работы с BottomNavigationView
+        // Configuration for working with BottomNavigationView
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_search,
@@ -51,30 +51,30 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        // Настройка ActionBar с контроллером навигации
+        // Setup ActionBar with the navigation controller
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Проверка токена и навигация
+        // Check the token and navigate accordingly
         checkTokenAndNavigate()
     }
 
     private fun checkTokenAndNavigate() {
-        // Корутина для проверки токена
+        // Coroutine for token check
         lifecycleScope.launch {
             val token = tokenRepository.getToken()
 
             if (token != null) {
-                // Если токен существует, направляем на экран списка продуктов
+                // If token exists, navigate to the products screen
                 navController.navigate(R.id.navigation_products)
             } else {
-                // Если токен не найден, остаемся на экране профиля
+                // If token is not found, stay on the profile screen
                 navController.navigate(R.id.navigation_profile)
             }
         }
     }
 
-    // Метод для поддержки навигации через ActionBar (стрелка назад)
+    // Method to support navigation via ActionBar (back arrow)
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }

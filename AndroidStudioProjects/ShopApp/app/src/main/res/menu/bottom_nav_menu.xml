@@ -4,29 +4,29 @@
     <item
         android:id="@+id/navigation_search"
         android:enabled="false"
-        android:icon="@drawable/search"
+        android:icon="@drawable/ic_search"
         android:title="@string/title_search" />
 
     <item
         android:id="@+id/navigation_favorite"
         android:enabled="false"
-        android:icon="@drawable/favorite"
+        android:icon="@drawable/ic_favorite"
         android:title="@string/title_favorite" />
 
     <item
         android:id="@+id/navigation_products"
-        android:icon="@drawable/products"
+        android:icon="@drawable/ic_products"
         android:title="@string/title_products" />
 
     <item
         android:id="@+id/navigation_message"
         android:enabled="false"
-        android:icon="@drawable/message"
+        android:icon="@drawable/ic_message"
         android:title="@string/title_message" />
 
     <item
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/profile"
+        android:icon="@drawable/ic_profile"
         android:title="@string/title_profile" />
 
 </menu>
