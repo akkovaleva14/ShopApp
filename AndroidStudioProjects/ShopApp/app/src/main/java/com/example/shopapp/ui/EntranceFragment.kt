@@ -15,18 +15,24 @@ import androidx.navigation.fragment.findNavController
 import com.example.data.TokenDatabase
 import com.example.domain.repositories.AuthRepository
 import com.example.domain.repositories.TokenRepository
-import com.example.domain.viewmodels.EntranceViewModel
 import com.example.domain.viewmodelfactories.ViewModelFactory
+import com.example.domain.viewmodels.EntranceViewModel
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentEntranceBinding
 import com.example.shopapp.utils.NetworkUtils
+import com.example.shopapp.utils.StringUtils
 import kotlinx.coroutines.launch
 
 // EntranceFragment handles the login process including password visibility toggle and user input validation.
-class EntranceFragment : Fragment(R.layout.fragment_entrance) {
+class EntranceFragment : Fragment() {
 
-    private lateinit var tokenDatabase: TokenDatabase
-    private lateinit var tokenRepository: TokenRepository
+    // Initialize token database, repository, and ViewModel lazily
+    private val tokenDatabase by lazy {
+        TokenDatabase.getDatabase(requireContext())
+    }
+    private val tokenRepository by lazy {
+        TokenRepository(tokenDatabase.tokenDao())
+    }
 
     private val entranceViewModel: EntranceViewModel by viewModels {
         ViewModelFactory(AuthRepository(tokenRepository), tokenRepository)
@@ -37,14 +43,6 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
     private val binding get() = _binding!!
 
     private var isPasswordVisible = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Initialize tokenDatabase and tokenRepository before they are used by ViewModel
-        tokenDatabase = TokenDatabase.getDatabase(requireContext())
-        tokenRepository = TokenRepository(tokenDatabase.tokenDao())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -145,13 +143,13 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
         val trimmedPassword = password.trim()
 
         // Check if any field is empty
-        if (trimmedEmail.isEmpty() || trimmedPassword.isEmpty()) {
+        if (trimmedEmail.isBlank() || trimmedPassword.isBlank()) {
             Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
             return false
         }
 
         // Validate email format
-        if (!isValidEmail(trimmedEmail)) {
+        if (!StringUtils.isValidEmail(trimmedEmail)) {
             Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -164,12 +162,6 @@ class EntranceFragment : Fragment(R.layout.fragment_entrance) {
         }
 
         return true
-    }
-
-    // Function to validate email format using regex
-    private fun isValidEmail(email: String): Boolean {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-        return email.matches(emailRegex.toRegex())
     }
 
     // Clean up references when the view is destroyed to prevent memory leaks

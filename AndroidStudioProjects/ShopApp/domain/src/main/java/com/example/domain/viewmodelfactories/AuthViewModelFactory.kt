@@ -12,7 +12,6 @@ class AuthViewModelFactory(
     private val tokenRepository: TokenRepository
 ) : ViewModelProvider.Factory {
 
-    // Override the create method to instantiate the AuthViewModel with required repositories.
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         // Check if the requested ViewModel class is AuthViewModel.

@@ -19,10 +19,11 @@ import com.example.domain.viewmodelfactories.AuthViewModelFactory
 import com.example.shopapp.R
 import com.example.shopapp.databinding.FragmentProfileBinding
 import com.example.shopapp.utils.NetworkUtils
+import com.example.shopapp.utils.StringUtils
 import kotlinx.coroutines.launch
 
 // ProfileFragment handles user registration, validation, and UI interaction.
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+class ProfileFragment : Fragment() {
 
     // Initialize token database, repository, and ViewModel lazily
     private val tokenDatabase by lazy {
@@ -94,16 +95,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // Observe errors from ViewModel and display appropriate messages
         authViewModel.error.observe(viewLifecycleOwner, Observer { errorMessage ->
             Log.e("ProfileFragment", "Registration error: $errorMessage")
-            when (errorMessage) {
-                "Email already exists" -> {
-                    Toast.makeText(context, "This email is already registered.", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                else -> {
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-            }
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         })
 
         // Observe the loading state and show/hide the progress bar accordingly
@@ -120,14 +112,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val trimmedConfirmPassword = confirmPassword.trim()
 
         // Check if any field is empty
-        if (name.isEmpty() || email.isEmpty() || trimmedPassword.isEmpty() || trimmedConfirmPassword.isEmpty()) {
+        if (name.isBlank() || email.isBlank() || trimmedPassword.isBlank() || trimmedConfirmPassword.isBlank()) {
             Toast.makeText(context, getString(R.string.all_fields_are_required), Toast.LENGTH_SHORT)
                 .show()
             return false
         }
 
         // Validate email format
-        if (!isValidEmail(email)) {
+        if (!StringUtils.isValidEmail(email)) {
             Toast.makeText(context, getString(R.string.invalid_email_format), Toast.LENGTH_SHORT)
                 .show()
             return false
@@ -160,12 +152,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         return true
-    }
-
-    // Function to validate the email format using regex
-    private fun isValidEmail(email: String): Boolean {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-        return email.matches(emailRegex.toRegex())
     }
 
     override fun onDestroyView() {

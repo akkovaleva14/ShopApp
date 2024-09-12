@@ -42,5 +42,6 @@
     <string name="password_should_not_exceed_24_characters">Password should not exceed 24 characters</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="login_failed">Login failed</string>
+    <string name="doesn_t_work_yet_sorry">Doesn\'t work yet. Sorry!</string>
 
 </resources>

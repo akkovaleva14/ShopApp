@@ -3,6 +3,7 @@ package com.example.domain.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.domain.repositories.ProductItemRepository
 import com.example.network.Product
 import kotlinx.coroutines.CoroutineScope
@@ -17,13 +18,9 @@ class ProductViewModel(private val repository: ProductItemRepository) : ViewMode
     private val _product = MutableLiveData<Product?>()
     val product: LiveData<Product?> get() = _product
 
-    // Job and CoroutineScope for managing background operations.
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Main + job)
-
     // Function to load product details based on the provided product ID.
     fun loadProduct(productId: String) {
-        scope.launch {
+        viewModelScope.launch {
             try {
                 // Request product details from the repository.
                 val result = repository.getProductDetails(productId)
@@ -39,11 +36,5 @@ class ProductViewModel(private val repository: ProductItemRepository) : ViewMode
                 _product.value = null
             }
         }
-    }
-
-    // Clean up resources when the ViewModel is cleared.
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()  // Cancel the coroutine job to prevent memory leaks.
     }
 }

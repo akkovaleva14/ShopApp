@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/navigation_search"
-        android:enabled="false"
+        android:enabled="true"
         android:icon="@drawable/ic_search"
         android:title="@string/title_search" />
 
     <item
         android:id="@+id/navigation_favorite"
-        android:enabled="false"
+        android:enabled="true"
         android:icon="@drawable/ic_favorite"
         android:title="@string/title_favorite" />
 
@@ -20,7 +20,7 @@
 
     <item
         android:id="@+id/navigation_message"
-        android:enabled="false"
+        android:enabled="true"
         android:icon="@drawable/ic_message"
         android:title="@string/title_message" />
 

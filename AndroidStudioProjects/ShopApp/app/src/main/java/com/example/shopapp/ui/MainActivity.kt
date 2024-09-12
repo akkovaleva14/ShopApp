@@ -1,6 +1,7 @@
 package com.example.shopapp.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -57,6 +58,9 @@ class MainActivity : AppCompatActivity() {
 
         // Check the token and navigate accordingly
         checkTokenAndNavigate()
+
+        // Add listeners to bottom navigation items
+        setupBottomNavigationListener(navView)
     }
 
     private fun checkTokenAndNavigate() {
@@ -74,8 +78,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Method to support navigation via ActionBar (back arrow)
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+    private fun setupBottomNavigationListener(navView: BottomNavigationView) {
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_search, R.id.navigation_favorite, R.id.navigation_message -> {
+                    // Show toast for INVALID action
+                    Toast.makeText(this,
+                        getString(R.string.doesn_t_work_yet_sorry), Toast.LENGTH_SHORT).show()
+                    false // Returning false to indicate the action is not handled (no navigation)
+                }
+                else -> {
+                    // Let the navController handle other actions (products, profile)
+                    navController.navigate(item.itemId)
+                    true
+                }
+            }
+        }
     }
 }

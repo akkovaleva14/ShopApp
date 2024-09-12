@@ -9,9 +9,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.shopapp.R
+import com.example.shopapp.databinding.FragmentErrorBinding
+import com.example.shopapp.databinding.FragmentProductBinding
 import com.example.shopapp.utils.NetworkUtils
 
 class ErrorFragment : Fragment() {
+
+    private var _binding: FragmentErrorBinding? = null
+    private val binding get() = _binding
 
     private var productId: String? = null
     private var category: String? = null
@@ -22,7 +27,8 @@ class ErrorFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_error, container, false)
+        _binding = FragmentErrorBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,11 +42,8 @@ class ErrorFragment : Fragment() {
             pageNumber = it.getInt("PAGE_NUMBER", 1) // Default to page 1 if not provided
         }
 
-        // Initialize the "Try Again" button
-        val tryAgainButton: Button = view.findViewById(R.id.tryAgainButton)
-
         // Set a click listener for the "Try Again" button
-        tryAgainButton.setOnClickListener {
+        binding?.tryAgainButton?.setOnClickListener {
             attemptRetry()  // Attempt to retry loading the product
         }
     }
@@ -68,5 +71,10 @@ class ErrorFragment : Fragment() {
             Toast.makeText(context, getString(R.string.failure_try_again), Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

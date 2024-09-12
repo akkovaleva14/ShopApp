@@ -35,7 +35,6 @@ class ProductListFragment : Fragment() {
     private var isAscending = true // Default to ascending order
     private var selectedCategory: String? = "computers" // Default category
     private var retryCategory: String? = null // To store the category for retrying
-    private val ioScope = CoroutineScope(Dispatchers.IO) // CoroutineScope for IO operations
     private var lastCategory: String? = null
     private var lastSortOrder: String? = null
     private var currentPage = 1
@@ -165,6 +164,7 @@ class ProductListFragment : Fragment() {
                 if (NetworkUtils.isInternetAvailable(requireContext())) {
                     selectedCategory = category
                     retryCategory = null
+                    currentPage = 1
                     loadProducts(selectedCategory, currentPage)
                 } else {
                     retryCategory = category
@@ -236,6 +236,5 @@ class ProductListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        ioScope.cancel()
     }
 }
