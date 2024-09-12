@@ -40,7 +40,7 @@ class ProductListFragment : Fragment() {
     private var lastCategory: String? = null
     private var lastSortOrder: String? = null
     private var currentPage = 1
-    private val pageSize = 4
+    private val pageSize = 4 // Количество товаров на одной странице
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -116,6 +116,12 @@ class ProductListFragment : Fragment() {
             productAdapter.submitList(products)
             binding.retryButton.visibility = View.GONE
             binding.productProgressBar.visibility = View.GONE
+
+            // Деактивируем previousPageButton на первой странице
+            binding.previousPageButton.isEnabled = currentPage > 1
+
+            // Деактивируем nextPageButton, если меньше товаров, чем pageSize
+            binding.nextPageButton.isEnabled = products.size == pageSize
         })
 
         viewModel.error.observe(viewLifecycleOwner, Observer { error ->
